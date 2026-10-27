@@ -1,0 +1,1773 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>NOEMA</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="NOEMA is an early-stage, experimental research venture toward computational scientific discovery: AI systems that generate, challenge and refine scientific hypotheses.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Hanken+Grotesk:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a research-institution folio. A narrow mono margin carries annotations (figure numbers, status, units) beside a wide reading column; one live mathematical figure opens the page; the Discovery Engine is laid out as an instrument panel. */
+:root{
+  color-scheme: dark;
+  --ink:#06070A;
+  --ink-2:#0A0C10;
+  --panel:#0D1015;
+  --panel-2:#12161D;
+  --ivory:#ECE6D8;
+  --ivory-2:#BDB8AC;
+  --ivory-3:#86847D;
+  --ivory-4:#4E4E4B;
+  --line:rgba(236,230,216,.09);
+  --line-2:rgba(236,230,216,.18);
+  --blue:#8DB0DF;
+  --blue-2:#5F86BC;
+  --blue-soft:rgba(141,176,223,.10);
+  --blue-line:rgba(141,176,223,.35);
+  --amber:#D2B077;
+  --rose:#C9907F;
+  --f-display:"Cormorant Garamond", "Cormorant", Garamond, "Times New Roman", serif;
+  --f-body:"Hanken Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --maxw:1200px;
+  --gut:clamp(16px, 4vw, 44px);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:76px}
+body{background:var(--ink);color:var(--ivory);font-family:var(--f-body);font-size:16px;line-height:1.62;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--ink)}
+::selection{background:var(--blue-2);color:var(--ink)}
+a{color:inherit}
+:focus-visible{outline:1px solid var(--blue);outline-offset:3px;border-radius:2px}
+.wrap{max-width:var(--maxw);margin:0 auto;padding-left:max(var(--gut), env(safe-area-inset-left,0px));padding-right:max(var(--gut), env(safe-area-inset-right,0px))}
+.mono{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ivory-3)}
+.mono b{color:var(--ivory-2);font-weight:500}
+h1,h2,h3{font-family:var(--f-display);font-weight:300;margin:0;text-wrap:balance;letter-spacing:-.01em}
+p{margin:0}
+em{font-style:italic}
+
+/* NAV */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(6,7,10,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:62px;gap:24px}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+.brand-word{font-family:var(--f-display);font-size:21px;font-weight:500;letter-spacing:.32em;padding-left:.1em}
+.brand-mark{width:22px;height:22px}
+.navlinks{display:flex;gap:4px;list-style:none;margin:0;padding:0}
+.navlinks a{display:block;text-decoration:none;font-size:13px;color:var(--ivory-3);padding:8px 12px;border-radius:999px;transition:color .2s, background .2s}
+.navlinks a:hover{color:var(--ivory)}
+.navlinks a.on{color:var(--ivory);background:rgba(236,230,216,.05)}
+.navlinks a.engine-link{color:var(--blue)}
+.navlinks a.engine-link.on{background:var(--blue-soft)}
+.menu-btn{display:none;background:none;border:1px solid var(--line-2);color:var(--ivory-2);font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:8px 12px;border-radius:999px;cursor:pointer}
+@media (max-width:1080px){
+  .menu-btn{display:block}
+  .navlinks{display:none;position:absolute;left:0;right:0;top:62px;flex-direction:column;background:var(--ink-2);border-bottom:1px solid var(--line);padding:8px max(var(--gut), env(safe-area-inset-left,0px)) 16px}
+  .navlinks.open{display:flex}
+  .navlinks a{padding:12px 0;border-radius:0;font-size:15px;border-bottom:1px solid var(--line)}
+  .navlinks a.on{background:none}
+}
+
+/* SECTIONS */
+section{border-bottom:1px solid var(--line)}
+.sec{padding-block:clamp(72px,10vw,132px)}
+.sec-grid{display:grid;grid-template-columns:200px minmax(0,1fr);gap:clamp(24px,5vw,72px)}
+.margin{display:flex;flex-direction:column;gap:10px;padding-top:10px}
+.margin .rule{width:28px;height:1px;background:var(--blue-line)}
+@media (max-width:860px){.sec-grid{grid-template-columns:minmax(0,1fr)}.margin{flex-direction:row;align-items:center;gap:14px;padding-top:0}}
+.h2{font-size:clamp(38px,5.4vw,64px);line-height:1.04;max-width:16ch}
+.h2 em{color:var(--ivory-2)}
+.lede{font-size:clamp(17px,1.6vw,19px);color:var(--ivory-2);max-width:62ch;line-height:1.65;font-weight:300}
+
+/* HERO */
+.hero{position:relative;overflow:hidden}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:clamp(24px,4vw,56px);align-items:center;padding-block:clamp(56px,8vw,112px) clamp(56px,7vw,96px)}
+.hero-copy{display:flex;flex-direction:column;gap:30px;min-width:0}
+.hero h1{font-size:clamp(52px,8.2vw,112px);line-height:.96;letter-spacing:-.02em;font-weight:300}
+.hero h1 .l2{display:block;font-style:italic;color:var(--ivory-2)}
+.hero h1 .l2 span{color:var(--blue)}
+.lede.quote{font-family:var(--f-display);font-style:italic;font-size:clamp(21px,2.1vw,26px);line-height:1.4;color:var(--ivory);max-width:46ch}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px}
+.btn{display:inline-flex;align-items:center;gap:10px;font-family:var(--f-body);font-size:14px;font-weight:500;text-decoration:none;padding:13px 20px;border-radius:999px;border:1px solid var(--line-2);color:var(--ivory);background:transparent;cursor:pointer;transition:border-color .2s, background .2s, color .2s}
+.btn:hover{border-color:var(--ivory-3)}
+.btn.primary{background:var(--ivory);color:var(--ink);border-color:var(--ivory)}
+.btn.primary:hover{background:#fff}
+.btn.blue{border-color:var(--blue-line);color:var(--blue)}
+.btn.blue:hover{background:var(--blue-soft)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn .arr{transition:transform .25s}
+.btn:hover .arr{transform:translateX(3px)}
+.status{display:flex;gap:14px;align-items:flex-start;border-top:1px solid var(--line);padding-top:20px;max-width:58ch}
+.pulse{flex:none;width:7px;height:7px;border-radius:50%;background:var(--blue);margin-top:8px;box-shadow:0 0 0 0 var(--blue-line);animation:pulse 2.6s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(141,176,223,.45)}70%{box-shadow:0 0 0 9px rgba(141,176,223,0)}100%{box-shadow:0 0 0 0 rgba(141,176,223,0)}}
+.status p{font-size:14px;color:var(--ivory-3);line-height:1.6}
+.status p b{color:var(--ivory-2);font-weight:500}
+.figure{position:relative;min-width:0}
+.figure canvas{display:block;width:100%;aspect-ratio:1/1;max-width:100%}
+.fig-cap{display:flex;flex-direction:column;gap:6px;margin-top:6px;border-top:1px solid var(--line);padding-top:14px}
+.fig-cap p{font-size:13px;color:var(--ivory-3);line-height:1.55;max-width:46ch}
+.eq{font-family:var(--f-mono);font-size:11.5px;color:var(--ivory-3);display:flex;flex-wrap:wrap;gap:6px 18px}
+.eq span i{font-style:italic;color:var(--ivory-2)}
+@media (max-width:860px){.hero .wrap{grid-template-columns:minmax(0,1fr)}.figure canvas{aspect-ratio:4/3}}
+
+/* RESEARCH PROGRAMS */
+.levels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin-top:40px;border:1px solid var(--line);border-radius:4px}
+.level{padding:18px 20px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.level + .level{border-left:1px solid var(--line)}
+.lv-top{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:500}
+.lv-top b{margin-left:auto;font-family:var(--f-display);font-weight:400;font-size:30px;line-height:1;font-variant-numeric:tabular-nums}
+.level p{font-size:13.5px;color:var(--ivory-3);line-height:1.55}
+@media (max-width:760px){.levels{grid-template-columns:minmax(0,1fr)}.level + .level{border-left:none;border-top:1px solid var(--line)}}
+.pindex{display:flex;flex-direction:column;margin-top:36px;border-top:1px solid var(--line)}
+.pindex a{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:16px;align-items:baseline;padding:14px 0;border-bottom:1px solid var(--line);text-decoration:none;transition:padding .25s, background .25s}
+.pindex a:hover{padding-left:10px;background:linear-gradient(90deg,var(--blue-soft),transparent 70%)}
+.pi-n{font-family:var(--f-display);font-style:italic;font-size:22px;color:var(--blue)}
+.pi-name{font-family:var(--f-display);font-size:clamp(22px,2.4vw,28px);line-height:1.15}
+.pi-st{display:flex;align-items:center;gap:8px;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ivory-3)}
+.programs{margin-top:clamp(56px,7vw,96px);display:flex;flex-direction:column}
+.prog{border-top:1px solid var(--line-2);padding-block:clamp(40px,5vw,64px);scroll-margin-top:72px}
+.prog-head{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:clamp(16px,3vw,36px);align-items:start}
+.prog-n{font-family:var(--f-display);font-style:italic;font-weight:300;font-size:clamp(56px,7vw,92px);line-height:.8;color:var(--blue);min-width:1.3em}
+.prog-title{display:flex;flex-direction:column;gap:10px;min-width:0}
+.prog-title h3{font-size:clamp(34px,4.2vw,52px);line-height:1.02}
+.prog-title p{font-size:17px;color:var(--ivory-2);font-weight:300;max-width:56ch}
+.track{display:flex;gap:4px;flex-wrap:wrap;padding-top:8px}
+.track span{display:flex;align-items:center;gap:7px;font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ivory-4);padding:5px 9px;border:1px solid var(--line);border-radius:999px}
+.track span.cur{color:var(--blue);border-color:var(--blue-line)}
+@media (max-width:860px){.prog-head{grid-template-columns:auto minmax(0,1fr)}.track{grid-column:1/-1}}
+.prog-body{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);gap:clamp(28px,4vw,56px);margin-top:40px;align-items:start}
+@media (max-width:1040px){.prog-body{grid-template-columns:minmax(0,1fr)}}
+.prog-text{display:flex;flex-direction:column;gap:26px;min-width:0}
+.formal{display:flex;flex-direction:column;gap:12px;padding:20px 22px;border:1px solid var(--line);border-left:1px solid var(--blue-line);background:var(--ink-2);border-radius:0 4px 4px 0;overflow-x:auto}
+.fx{font-family:var(--f-display);font-size:clamp(20px,2vw,24px);line-height:1.4;color:var(--ivory);white-space:nowrap}
+.fx i{font-style:italic}
+.fx sub,.fx sup{font-size:.62em}
+.fnote{font-size:13.5px;color:var(--ivory-3);line-height:1.6}
+.fnote i{font-family:var(--f-display);font-size:1.15em}
+.pdl{margin:0;display:flex;flex-direction:column}
+.pdl > div{display:grid;grid-template-columns:150px minmax(0,1fr);gap:18px;padding:14px 0;border-top:1px solid var(--line)}
+.pdl dt{padding-top:4px}
+.pdl dd{margin:0;font-size:15px;color:var(--ivory-2);line-height:1.62}
+.pdl ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+.pdl li{font-family:var(--f-display);font-style:italic;font-size:19px;line-height:1.35;color:var(--ivory)}
+@media (max-width:560px){.pdl > div{grid-template-columns:minmax(0,1fr);gap:6px}}
+.pstat{color:var(--ivory-4)}
+.prog-viz{min-width:0;position:sticky;top:84px}
+@media (max-width:1040px){.prog-viz{position:static}}
+
+/* VIZ */
+.viz{margin:0;border:1px solid var(--line);border-radius:6px;background:var(--panel);overflow:hidden;container-type:inline-size}
+.viz-bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:11px 16px;border-bottom:1px solid var(--line)}
+.vtag{font-family:var(--f-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);border:1px dashed var(--blue-line);padding:3px 7px;border-radius:2px}
+.viz-body{padding:14px 12px 6px;background:radial-gradient(circle at 50% 40%, rgba(141,176,223,.05), transparent 65%)}
+.viz-body svg{display:block;width:100%;height:auto;max-width:100%}
+.viz-2{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+@container (min-width:600px){.viz-2{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+.viz-read{display:flex;flex-wrap:wrap;gap:6px 18px;padding:12px 16px;border-top:1px solid var(--line);font-family:var(--f-mono);font-size:11.5px;color:var(--ivory-2);font-variant-numeric:tabular-nums;min-height:44px;align-items:center}
+.viz-read i{font-style:normal;color:var(--ivory-3);margin-left:4px}
+.viz-read .hl{color:var(--blue)}.viz-read .rose{color:var(--rose)}.viz-read .blue{color:var(--blue)}
+.viz-ctl{display:flex;flex-wrap:wrap;gap:16px 24px;padding:14px 16px 18px;border-top:1px solid var(--line)}
+.sl{display:flex;flex-direction:column;gap:8px;flex:1 1 200px;min-width:0}
+.sl-top{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;color:var(--ivory-3)}
+.sl-top b{font-family:var(--f-mono);font-weight:500;color:var(--ivory);font-variant-numeric:tabular-nums}
+.sl input{width:100%;-webkit-appearance:none;appearance:none;background:transparent;height:18px;cursor:pointer}
+.sl input::-webkit-slider-runnable-track{height:2px;background:var(--line-2)}
+.sl input::-moz-range-track{height:2px;background:var(--line-2)}
+.sl input::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--ink);border:1.5px solid var(--blue);margin-top:-6px}
+.sl input::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:var(--ink);border:1.5px solid var(--blue)}
+.seg{display:inline-flex;border:1px solid var(--line-2);border-radius:999px;padding:3px;align-self:flex-end;flex-wrap:wrap}
+.seg button{background:none;border:none;color:var(--ivory-3);font-family:var(--f-body);font-size:12.5px;padding:6px 12px;border-radius:999px;cursor:pointer}
+.seg button.on{background:var(--blue-soft);color:var(--blue)}
+.gridl{stroke:var(--line);stroke-width:1}
+.axt{font-family:var(--f-mono);font-size:9.5px;fill:var(--ivory-3)}
+.axt.blue{fill:var(--blue)}.axt.rose{fill:var(--rose)}
+.obs{fill:var(--ivory)}
+.fitc{fill:none;stroke:var(--blue);stroke-width:1.6}
+.bar-h{fill:var(--blue-2);opacity:.75}
+.bar-d{fill:var(--ivory-4)}
+.bar-d.sel{fill:var(--ivory-3)}
+.bar-h.sel{fill:var(--blue);opacity:1}
+.regA{fill:rgba(236,230,216,.05);stroke:var(--ivory-2);stroke-width:1}
+.regB{fill:rgba(201,144,127,.05);stroke:var(--rose);stroke-width:1;stroke-dasharray:5 4}
+.regB.same{fill:rgba(141,176,223,.05);stroke:var(--blue)}
+.regX{fill:rgba(201,144,127,.28);stroke:none}
+.regC{fill:rgba(141,176,223,.22);stroke:none}
+.rlab{font-family:var(--f-body);font-size:11px;fill:var(--ivory)}
+.dep{stroke:var(--ivory-3);opacity:.55;transition:opacity .3s}
+.dep.cut{opacity:.08;stroke-dasharray:2 3}
+.cw-bg{fill:var(--ink);stroke:var(--ivory-4);stroke-width:1}
+.cw-fill{fill:var(--blue);transition:opacity .4s}
+.cw-t{font-family:var(--f-mono);font-size:9.5px;fill:var(--ivory);paint-order:stroke;stroke:var(--ink);stroke-width:3px}
+.cwn.prem{cursor:pointer}
+.cwn.prem:hover .cw-bg{stroke:var(--blue)}
+.cwn.off .cw-bg{stroke:var(--rose);stroke-dasharray:2 2}
+.strike{stroke:var(--rose);stroke-width:1.2}
+.loadb{display:flex;flex-direction:column;gap:8px;width:100%}
+.lrow{display:grid;grid-template-columns:28px minmax(0,1fr) 42px;gap:10px;align-items:center;font-family:var(--f-mono);font-size:11px;color:var(--ivory-2);font-variant-numeric:tabular-nums}
+.lrow b{font-weight:400;text-align:right}
+.sepfill{fill:var(--blue-soft)}
+.tr-s{fill:none;stroke:var(--blue);stroke-width:1.6}
+.tr-f{fill:none;stroke:var(--rose);stroke-width:1.6;stroke-dasharray:5 3}
+.dot-s{fill:var(--blue)}.dot-f{fill:var(--rose)}
+.voidc{display:block;width:100%;aspect-ratio:4/3;max-width:100%;border-radius:2px;cursor:crosshair;touch-action:none}
+
+/* RESULTS */
+.results{background:var(--ink)}
+.counts{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));margin-top:44px;border-top:1px solid var(--line-2);border-bottom:1px solid var(--line)}
+.counts > div{padding:20px 16px 18px 0;display:flex;flex-direction:column;gap:8px;min-width:0}
+.counts > div + div{padding-left:16px;border-left:1px solid var(--line)}
+.counts b{font-family:var(--f-display);font-weight:300;font-size:clamp(44px,5vw,64px);line-height:.9;font-variant-numeric:tabular-nums;color:var(--ivory)}
+@media (max-width:760px){.counts{grid-template-columns:repeat(2,minmax(0,1fr))}.counts > div,.counts > div + div{padding:16px 0;border-left:none;border-top:1px solid var(--line)}.counts > div:nth-child(2n){padding-left:16px;border-left:1px solid var(--line)}.counts > div:first-child,.counts > div:nth-child(2){border-top:none}}
+.asof{margin-top:12px;color:var(--ivory-4)}
+.life{margin-top:48px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr)) minmax(0,.9fr);border:1px solid var(--line);border-radius:4px;background:var(--ink-2)}
+.life-step,.life-branch{padding:20px 18px;display:flex;flex-direction:column;gap:10px;position:relative;min-width:0}
+.life-step + .life-step,.life-branch{border-left:1px solid var(--line)}
+.life-step + .life-step::before{content:"";position:absolute;left:-5px;top:26px;width:9px;height:9px;border-top:1px solid var(--blue-line);border-right:1px solid var(--blue-line);transform:rotate(45deg);background:var(--ink-2)}
+.life-branch{border-left:1px dashed rgba(201,144,127,.35)}
+.life-top{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:500}
+.life-step p,.life-branch p{font-size:13.5px;color:var(--ivory-3);line-height:1.55}
+@media (max-width:980px){.life{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.life-step + .life-step::before{display:none}.life-step:nth-child(odd){border-left:none}.life-step:nth-child(n+3),.life-branch{border-top:1px solid var(--line)}.life-branch{grid-column:1/-1;border-left:none}}
+@media (max-width:520px){.life{grid-template-columns:minmax(0,1fr)}.life-step + .life-step{border-left:none;border-top:1px solid var(--line)}}
+.tmpl{margin-top:40px;border:1px solid var(--line);border-radius:6px;background:var(--panel);overflow:hidden}
+.tabs{display:flex;gap:2px;padding:8px 10px;border-bottom:1px solid var(--line);overflow-x:auto}
+.tabs button{flex:none;background:none;border:none;color:var(--ivory-3);font-family:var(--f-body);font-size:13px;padding:8px 12px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.tabs button:hover{color:var(--ivory)}
+.tabs button.on{color:var(--ivory);background:rgba(236,230,216,.06)}
+.tmpl-body{display:grid;grid-template-columns:220px minmax(0,1fr);gap:24px;padding:24px 22px 28px;min-height:180px}
+@media (max-width:640px){.tmpl-body{grid-template-columns:minmax(0,1fr)}}
+.tb-l{display:flex;flex-direction:column;gap:8px}
+.tb-l h4{margin:0;font-family:var(--f-display);font-weight:400;font-size:34px;line-height:1}
+.tmpl-body ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column}
+.tmpl-body li{display:grid;grid-template-columns:86px minmax(0,1fr);gap:12px;padding:11px 0;border-top:1px solid var(--line);font-size:15px;color:var(--ivory-2);align-items:baseline}
+.req{font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--blue)}
+.registry{margin-top:24px;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.reg-scroll{overflow-x:auto}
+.reg-row{display:grid;grid-template-columns:80px 130px minmax(180px,1fr) 110px 120px 100px;gap:14px;padding:12px 18px;min-width:760px;border-bottom:1px solid var(--line);background:var(--panel)}
+.reg-empty{min-width:760px;padding:40px 18px 44px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;background:repeating-linear-gradient(135deg, transparent 0 12px, rgba(236,230,216,.02) 12px 13px)}
+.reg-empty p{font-size:14px;color:var(--ivory-3);max-width:52ch}
+.rules{margin-top:48px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:24px}
+.rules > div{display:flex;flex-direction:column;gap:8px;padding-top:16px;border-top:1px solid var(--blue-line);min-width:0}
+.rules h4{margin:0;font-size:15px;font-weight:500}
+.rules p{font-size:13.5px;color:var(--ivory-3)}
+@media (max-width:980px){.rules{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.rules{grid-template-columns:minmax(0,1fr)}}
+
+/* TECHNOLOGY */
+.pipe{margin-top:56px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));position:relative;border:1px solid var(--line);border-radius:4px;background:var(--ink-2)}
+.stage{padding:24px 20px 26px;display:flex;flex-direction:column;gap:12px;position:relative;min-width:0}
+.stage + .stage{border-left:1px solid var(--line)}
+.stage + .stage::before{content:"";position:absolute;left:-5px;top:34px;width:9px;height:9px;border-top:1px solid var(--blue-line);border-right:1px solid var(--blue-line);transform:rotate(45deg);background:var(--ink-2)}
+.stage h4{margin:0;font-family:var(--f-display);font-weight:400;font-size:26px;line-height:1.1}
+.stage p{font-size:14px;color:var(--ivory-3);line-height:1.55}
+.stage .io{font-family:var(--f-mono);font-size:11px;color:var(--blue);letter-spacing:.04em}
+.loop{grid-column:1/-1;border-top:1px solid var(--line);padding:14px 20px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+@media (max-width:980px){.pipe{grid-template-columns:minmax(0,1fr)}.stage + .stage{border-left:none;border-top:1px solid var(--line)}.stage + .stage::before{left:28px;top:-5px;transform:rotate(135deg)}}
+.tech-lower{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(28px,4vw,56px);margin-top:64px}
+@media (max-width:900px){.tech-lower{grid-template-columns:minmax(0,1fr)}}
+.principles{display:flex;flex-direction:column}
+.principle{display:grid;grid-template-columns:28px minmax(0,1fr);gap:14px;padding:20px 0;border-top:1px solid var(--line)}
+.principle:last-child{border-bottom:1px solid var(--line)}
+.principle svg{margin-top:4px}
+.principle h4{margin:0 0 4px;font-size:16px;font-weight:500}
+.principle p{font-size:14.5px;color:var(--ivory-3)}
+.code{background:var(--panel);border:1px solid var(--line);border-radius:4px;overflow:hidden;min-width:0}
+.code-head{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.code pre{margin:0;padding:18px 16px 20px;font-family:var(--f-mono);font-size:12.5px;line-height:1.75;color:var(--ivory-2);overflow-x:auto}
+.code .k{color:var(--blue)}.code .s{color:var(--ivory)}.code .c{color:var(--ivory-4)}.code .t{color:var(--amber)}
+.ledger{margin-top:56px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);border:1px solid var(--line);border-radius:4px}
+.ledger > div{padding:24px 26px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.ledger > div + div{border-left:1px solid var(--line)}
+.ledger ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+.ledger li{font-size:15px;color:var(--ivory-2);display:flex;gap:10px}
+.ledger li::before{content:"";flex:none;width:5px;height:5px;margin-top:10px;border-radius:50%;background:var(--blue)}
+.ledger .no li::before{background:transparent;border:1px solid var(--ivory-3)}
+.ledger .no li{color:var(--ivory-3)}
+@media (max-width:700px){.ledger{grid-template-columns:minmax(0,1fr)}.ledger > div + div{border-left:none;border-top:1px solid var(--line)}}
+
+/* ABOUT */
+.about-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(32px,5vw,80px);margin-top:48px}
+@media (max-width:900px){.about-grid{grid-template-columns:minmax(0,1fr)}}
+.prose{display:flex;flex-direction:column;gap:20px}
+.prose p{font-size:17px;color:var(--ivory-2);max-width:60ch;font-weight:300}
+.etym{border:1px solid var(--line);border-radius:4px;padding:28px;display:flex;flex-direction:column;gap:14px;background:var(--ink-2);align-self:start}
+.etym .word{font-family:var(--f-display);font-size:58px;line-height:1;font-weight:300}
+.etym .word small{font-size:20px;color:var(--ivory-3);font-style:italic;margin-left:12px}
+.etym p{font-size:15px;color:var(--ivory-2)}
+.commit{display:flex;flex-direction:column;gap:0;margin-top:8px}
+.commit div{display:flex;gap:16px;padding:14px 0;border-top:1px solid var(--line);font-size:15px;color:var(--ivory-2)}
+.commit div span:first-child{font-family:var(--f-mono);font-size:11px;color:var(--blue);padding-top:4px;min-width:20px}
+
+/* TEAM */
+.founders{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin-top:56px;border-top:1px solid var(--line)}
+.founder{display:flex;flex-direction:column;gap:28px;padding:40px 32px 36px 0;min-width:0}
+.founder + .founder{padding-left:32px;border-left:1px solid var(--line)}
+.orbit{position:relative;width:120px;height:120px;max-width:100%}
+.orbit svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.orbit .ring{transform-origin:60px 60px;transition:transform 1.4s cubic-bezier(.2,.7,.2,1)}
+.founder:hover .ring{transform:rotate(152deg)!important}
+.orbit .init{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--f-display);font-style:italic;font-weight:300;font-size:40px;letter-spacing:.04em;color:var(--ivory)}
+.f-text{display:flex;flex-direction:column;gap:10px;border-top:1px solid var(--line);padding-top:18px}
+.f-text h3{font-size:clamp(30px,3vw,38px);line-height:1.05}
+.f-text .lead{color:var(--blue)}
+@media (max-width:860px){.founders{grid-template-columns:minmax(0,1fr)}.founder,.founder + .founder{padding:30px 0;border-left:none;border-bottom:1px solid var(--line);flex-direction:row;align-items:center;gap:24px}.orbit{width:88px;height:88px;flex:none}.orbit .init{font-size:30px}.f-text{border-top:none;padding-top:0}}
+
+/* ENGINE */
+.engine{background:var(--ink-2)}
+.sample-banner{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:28px;padding:12px 16px;border:1px dashed var(--blue-line);border-radius:4px;background:var(--blue-soft)}
+.sample-banner .tag{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink);background:var(--blue);padding:3px 8px;border-radius:2px;font-weight:500}
+.sample-banner p{font-size:13.5px;color:var(--ivory-2)}
+.console{margin-top:32px;display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);border:1px solid var(--line);border-radius:6px;background:var(--panel);overflow:hidden}
+@media (max-width:980px){.console{grid-template-columns:minmax(0,1fr)}}
+.c-left{border-right:1px solid var(--line);display:flex;flex-direction:column;min-width:0}
+@media (max-width:980px){.c-left{border-right:none;border-bottom:1px solid var(--line)}}
+.c-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid var(--line);min-height:45px}
+.dots{display:flex;gap:6px}.dots i{width:7px;height:7px;border-radius:50%;background:var(--ivory-4)}
+.qform{padding:20px 18px;display:flex;flex-direction:column;gap:14px;border-bottom:1px solid var(--line)}
+.qform label{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ivory-3)}
+.qform textarea{width:100%;resize:vertical;min-height:96px;background:var(--ink);border:1px solid var(--line-2);border-radius:4px;color:var(--ivory);font-family:var(--f-display);font-size:21px;line-height:1.35;padding:14px 16px;transition:border-color .2s}
+.qform textarea:focus{outline:none;border-color:var(--blue-line);box-shadow:0 0 0 3px var(--blue-soft)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:none;border:1px solid var(--line);color:var(--ivory-3);font-family:var(--f-body);font-size:12.5px;padding:6px 11px;border-radius:999px;cursor:pointer;text-align:left;transition:all .2s}
+.chip:hover{color:var(--ivory);border-color:var(--line-2)}
+.chip.on{color:var(--blue);border-color:var(--blue-line)}
+.qrow{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.qrow .hint{font-size:12px;color:var(--ivory-4)}
+.log{padding:16px 18px 20px;display:flex;flex-direction:column;gap:2px;flex:1}
+.log-row{display:grid;grid-template-columns:18px minmax(0,1fr) auto;gap:10px;padding:8px 0;align-items:start;border-bottom:1px solid var(--line);transition:opacity .3s}
+.log-row:last-child{border-bottom:none}
+.log-row.pending{opacity:.32}
+.log-row .st{width:9px;height:9px;margin-top:6px;border-radius:50%;border:1px solid var(--ivory-4)}
+.log-row.done .st{background:var(--blue);border-color:var(--blue)}
+.log-row.active .st{border-color:var(--blue);animation:spin .9s linear infinite;border-top-color:transparent;border-radius:50%}
+@keyframes spin{to{transform:rotate(360deg)}}
+.log-row .lb{font-size:14px;color:var(--ivory)}
+.log-row .dt{font-size:12.5px;color:var(--ivory-3);margin-top:2px;overflow-wrap:anywhere}
+.log-row .tm{font-family:var(--f-mono);font-size:10.5px;color:var(--ivory-4);padding-top:4px;font-variant-numeric:tabular-nums}
+.c-right{display:flex;flex-direction:column;min-width:0}
+.graph-box{position:relative;flex:1;min-height:420px;background:
+  radial-gradient(circle at 50% 45%, rgba(141,176,223,.06), transparent 60%),
+  linear-gradient(var(--line) 1px, transparent 1px) 0 0/40px 40px,
+  linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0/40px 40px;}
+.graph-box svg{display:block;width:100%;height:100%;position:absolute;inset:0}
+.g-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;text-align:center;padding:24px}
+.g-empty p{font-size:14px;color:var(--ivory-3)}
+.edge{fill:none}
+.edge.reported{stroke:var(--ivory-3);stroke-width:1;opacity:.75}
+.edge.inferred{stroke:var(--ivory-3);stroke-width:1;stroke-dasharray:1 4;stroke-linecap:round}
+.edge.contested{stroke:var(--amber);stroke-width:1;stroke-dasharray:6 4;opacity:.85}
+.edge.candidate{stroke:var(--blue);stroke-width:1.4;stroke-dasharray:4 5;animation:flow 1.4s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-18}}
+.edge.dim{opacity:.12}
+.edge.hl{opacity:1;stroke-width:1.6}
+.node{cursor:pointer}
+.node circle.core{fill:var(--ivory);transition:r .2s}
+.node.mechanism circle.core{fill:var(--panel);stroke:var(--ivory-2);stroke-width:1.2}
+.node.gap circle.core{fill:var(--blue)}
+.node circle.halo{fill:none;stroke:var(--blue);stroke-width:1;opacity:0;transition:opacity .2s}
+.node.sel circle.halo{opacity:.9}
+.node.gap circle.halo{opacity:.4;animation:breathe 2.4s ease-in-out infinite}
+@keyframes breathe{50%{opacity:.08}}
+.node text{font-family:var(--f-body);font-size:12.5px;fill:var(--ivory-2);paint-order:stroke;stroke:var(--panel);stroke-width:5px;stroke-linejoin:round;pointer-events:none}
+.node.sel text,.node:hover text{fill:var(--ivory)}
+.node.dim{opacity:.25}
+.edge-q{font-family:var(--f-mono);font-size:11px;fill:var(--blue)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;padding:12px 18px;border-top:1px solid var(--line)}
+.legend span{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ivory-3)}
+.inspector{border-top:1px solid var(--line);padding:16px 18px 18px;display:flex;flex-direction:column;gap:10px;min-height:150px}
+.ins-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.ins-head h4{margin:0;font-family:var(--f-display);font-weight:400;font-size:24px}
+.ins-list{display:flex;flex-direction:column;gap:6px}
+.ins-item{display:grid;grid-template-columns:86px minmax(0,1fr) auto;gap:10px;font-size:13.5px;color:var(--ivory-2);align-items:baseline}
+.ins-item .kind{font-family:var(--f-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.1em}
+.kind.reported{color:var(--ivory-3)}.kind.inferred{color:var(--ivory-3)}.kind.contested{color:var(--amber)}.kind.candidate{color:var(--blue)}
+.ins-item .src{font-family:var(--f-mono);font-size:11px;color:var(--ivory-4)}
+@media (max-width:520px){.ins-item{grid-template-columns:minmax(0,1fr)}.ins-item .src{justify-self:start}}
+
+/* REPORT */
+.report{margin-top:28px;border:1px solid var(--line);border-radius:6px;background:var(--panel);overflow:hidden}
+.report-body{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,.65fr)}
+@media (max-width:900px){.report-body{grid-template-columns:minmax(0,1fr)}}
+.r-main{padding:clamp(22px,3.4vw,40px);display:flex;flex-direction:column;gap:26px;border-right:1px solid var(--line);min-width:0}
+@media (max-width:900px){.r-main{border-right:none;border-bottom:1px solid var(--line)}}
+.hyp{font-family:var(--f-display);font-size:clamp(26px,2.9vw,36px);line-height:1.22;font-weight:300}
+.hyp em{color:var(--blue);font-style:italic}
+.chain{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.chain span.n{font-size:13px;color:var(--ivory-2);border:1px solid var(--line-2);padding:5px 10px;border-radius:999px}
+.chain span.n.gap{border-color:var(--blue-line);color:var(--blue);border-style:dashed}
+.chain span.a{color:var(--ivory-4);font-size:13px}
+.pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
+@media (max-width:640px){.pair{grid-template-columns:minmax(0,1fr)}}
+.pair div{display:flex;flex-direction:column;gap:8px;padding-top:14px;border-top:1px solid var(--line)}
+.pair p{font-size:15px;color:var(--ivory-2)}
+.r-side{padding:clamp(22px,3vw,32px);display:flex;flex-direction:column;gap:22px;min-width:0}
+.score{display:flex;flex-direction:column;gap:8px}
+.score-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.score-top strong{font-family:var(--f-display);font-weight:400;font-size:24px}
+.score-top strong small{font-family:var(--f-mono);font-size:11px;color:var(--ivory-3);margin-left:6px;font-variant-numeric:tabular-nums}
+.bar{height:3px;background:var(--line);position:relative;border-radius:2px;overflow:hidden}
+.bar i{position:absolute;inset:0 auto 0 0;background:var(--blue);border-radius:2px;transition:width 1s cubic-bezier(.2,.7,.2,1)}
+.score p{font-size:13px;color:var(--ivory-3)}
+.ev{border-top:1px solid var(--line)}
+.ev-head{padding:18px clamp(22px,3.4vw,40px);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.ev-head h4{margin:0;font-family:var(--f-display);font-size:26px;font-weight:400}
+.ev-table{overflow-x:auto}
+.ev-row{display:grid;grid-template-columns:70px minmax(0,1fr) 112px 64px;gap:16px;padding:14px clamp(22px,3.4vw,40px);border-top:1px solid var(--line);align-items:baseline;min-width:560px}
+.ev-row.h{padding-block:10px}
+.ev-row .id{font-family:var(--f-mono);font-size:12px;color:var(--ivory-3)}
+.ev-row .txt{font-size:14.5px;color:var(--ivory-2)}
+.stance{font-family:var(--f-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;padding:3px 8px;border-radius:2px;justify-self:start;border:1px solid}
+.stance.supports{color:var(--blue);border-color:var(--blue-line)}
+.stance.contradicts{color:var(--rose);border-color:rgba(201,144,127,.4)}
+.stance.context{color:var(--ivory-3);border-color:var(--line-2)}
+.wt{display:flex;gap:4px}.wt i{width:6px;height:6px;border-radius:50%;border:1px solid var(--ivory-3)}.wt i.f{background:var(--ivory-2);border-color:var(--ivory-2)}
+.limits{border-top:1px solid var(--line);padding:22px clamp(22px,3.4vw,40px) 28px;display:grid;grid-template-columns:200px minmax(0,1fr);gap:20px}
+@media (max-width:700px){.limits{grid-template-columns:minmax(0,1fr)}}
+.limits h4{margin:0;font-family:var(--f-display);font-size:26px;font-weight:400}
+.limits ol{margin:0;padding:0;list-style:none;counter-reset:l;display:flex;flex-direction:column;gap:12px}
+.limits li{counter-increment:l;display:grid;grid-template-columns:26px minmax(0,1fr);font-size:15px;color:var(--ivory-2)}
+.limits li::before{content:counter(l, lower-roman) ".";font-family:var(--f-display);font-style:italic;color:var(--amber)}
+.report-foot{border-top:1px solid var(--line);padding:14px clamp(22px,3.4vw,40px);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.skeleton{padding:clamp(22px,3.4vw,40px);display:flex;flex-direction:column;gap:14px}
+.sk{height:14px;border-radius:2px;background:linear-gradient(90deg,var(--line),rgba(236,230,216,.14),var(--line));background-size:200% 100%;animation:sh 1.6s linear infinite}
+@keyframes sh{to{background-position:-200% 0}}
+.fadein{animation:fi .7s ease both}
+@keyframes fi{from{opacity:.0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+footer{padding-block:48px 56px}
+footer .wrap{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-end}
+footer p{font-size:13px;color:var(--ivory-3);max-width:60ch}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+  html{scroll-behavior:auto}
+}
+</style>
+
+<div id="root"></div>
+<noscript><div style="padding:40px;font-family:serif;color:#ECE6D8;background:#06070A">NOEMA. Discovery begins where knowledge ends. This site needs JavaScript to run its demonstration.</div></noscript>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useRef, useMemo, useCallback } = React;
+const REDUCE = typeof matchMedia !== "undefined" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+const css = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+/* ---------------- SAMPLE DATA (synthetic, for demonstration only) ---------------- */
+const SCENARIOS = [
+  {
+    id: "rhythm",
+    chip: "Feeding rhythm and antibiotic tolerance",
+    question: "Could the daily timing of nutrient availability change how tolerant gut bacteria are to antibiotics?",
+    keywords: ["antibiotic","bacteria","bacterial","tolerance","persister","nutrient","feeding","circadian","rhythm","timing","gut","microbiome","dose","dosing"],
+    stats: { retrieved: 9, claims: 31, gaps: 4 },
+    nodes: [
+      { id:"feed", label:"Host feeding rhythm", type:"concept" },
+      { id:"flux", label:"Gut nutrient flux", type:"concept" },
+      { id:"pulse", label:"Nutrient pulses", type:"concept" },
+      { id:"phase", label:"Growth-phase transitions", type:"mechanism" },
+      { id:"strin", label:"Stringent response", type:"mechanism" },
+      { id:"dorm", label:"Metabolic dormancy", type:"mechanism" },
+      { id:"pers", label:"Persister fraction", type:"concept" },
+      { id:"tol", label:"Antibiotic tolerance", type:"concept" },
+      { id:"dose", label:"Dosing time", type:"gap" },
+      { id:"host", label:"Host drug metabolism", type:"concept" },
+    ],
+    edges: [
+      { s:"feed", t:"flux", kind:"reported", rel:"shapes", src:["S-14"] },
+      { s:"flux", t:"pulse", kind:"inferred", rel:"implies", src:["S-14"] },
+      { s:"pulse", t:"phase", kind:"reported", rel:"triggers", src:["S-03"] },
+      { s:"pulse", t:"strin", kind:"reported", rel:"modulates", src:["S-03"] },
+      { s:"phase", t:"dorm", kind:"reported", rel:"can induce", src:["S-07"] },
+      { s:"strin", t:"dorm", kind:"reported", rel:"drives", src:["S-11"] },
+      { s:"dorm", t:"pers", kind:"reported", rel:"raises", src:["S-07","S-11"] },
+      { s:"phase", t:"pers", kind:"contested", rel:"weak or absent effect", src:["S-19"] },
+      { s:"pers", t:"tol", kind:"reported", rel:"underlies", src:["S-02"] },
+      { s:"dose", t:"host", kind:"reported", rel:"alters", src:["S-22"] },
+      { s:"dose", t:"feed", kind:"candidate", rel:"no sample document examines both", src:[] },
+    ],
+    focus: "dose",
+    hypothesis: <>In a host that feeds on a daily rhythm, the share of antibiotic-tolerant cells in gut bacteria may <em>rise and fall over the day</em>. If so, the same dose could clear more bacteria at some hours than at others.</>,
+    chain: ["Feeding rhythm","Nutrient pulses","Stringent response","Dormancy","Persister fraction","Dosing time"],
+    prediction: "Persister fraction sampled across a 24-hour cycle varies more in a rhythmically fed model than in a continuously fed control.",
+    falsify: "Persister fraction shows no consistent difference between rhythmic and continuous feeding at any sampling time.",
+    scores: { confidence: 0.28, novelty: 0.64, testability: 0.81 },
+    evidence: [
+      { id:"S-03", txt:"Nutrient upshift and downshift produce growth-phase transitions in batch culture.", stance:"supports", w:2 },
+      { id:"S-07", txt:"Cells entering stationary phase show more dormancy markers.", stance:"supports", w:2 },
+      { id:"S-11", txt:"Activation of the stringent response correlates with higher survival after antibiotic exposure.", stance:"supports", w:3 },
+      { id:"S-14", txt:"Nutrient concentrations in a gut model fluctuate with the host's feeding schedule.", stance:"supports", w:1 },
+      { id:"S-19", txt:"Persister formation occurs at similar rates across nutrient conditions and is attributed to stochastic switching.", stance:"contradicts", w:3 },
+      { id:"S-22", txt:"Dosing-time effects are reported for host drug metabolism. Bacterial state was not measured.", stance:"context", w:1 },
+    ],
+    limits: [
+      "The chain joins findings from different systems (batch culture, a gut model). Effects seen in each may not combine.",
+      "S-19 suggests persister formation may depend on nutrient state less than the chain assumes.",
+      "Host-side dosing-time effects (S-22) would confound any test in a living host.",
+      "The sample corpus holds 24 synthetic abstracts. A real literature search could show this link is already studied or ruled out.",
+    ],
+  },
+  {
+    id: "electrolyte",
+    chip: "Predicting conductivity in solid electrolytes",
+    question: "Which structural features might predict ionic conductivity in polycrystalline solid electrolytes?",
+    keywords: ["ionic","conductivity","electrolyte","electrolytes","solid","battery","batteries","lattice","crystal","polycrystalline","grain","materials","material","ion","phonon"],
+    stats: { retrieved: 11, claims: 38, gaps: 3 },
+    nodes: [
+      { id:"soft", label:"Lattice softness", type:"concept" },
+      { id:"phon", label:"Low-frequency phonons", type:"mechanism" },
+      { id:"barr", label:"Hopping barrier", type:"mechanism" },
+      { id:"bulk", label:"Bulk conductivity", type:"concept" },
+      { id:"anion", label:"Anion framework", type:"concept" },
+      { id:"vac", label:"Vacancy concentration", type:"concept" },
+      { id:"dop", label:"Dopant size", type:"concept" },
+      { id:"gb", label:"Grain-boundary density", type:"gap" },
+      { id:"tot", label:"Measured conductivity", type:"concept" },
+      { id:"syn", label:"Sintering temperature", type:"concept" },
+    ],
+    edges: [
+      { s:"soft", t:"phon", kind:"reported", rel:"correlates with", src:["S-04"] },
+      { s:"phon", t:"barr", kind:"reported", rel:"lowers", src:["S-04","S-09"] },
+      { s:"anion", t:"barr", kind:"reported", rel:"sets", src:["S-09"] },
+      { s:"barr", t:"bulk", kind:"reported", rel:"governs", src:["S-09"] },
+      { s:"dop", t:"vac", kind:"reported", rel:"tunes", src:["S-12"] },
+      { s:"vac", t:"bulk", kind:"reported", rel:"raises", src:["S-12"] },
+      { s:"bulk", t:"tot", kind:"inferred", rel:"assumed equal to", src:["S-04"] },
+      { s:"syn", t:"gb", kind:"reported", rel:"controls", src:["S-17"] },
+      { s:"gb", t:"tot", kind:"contested", rel:"dominant in some families only", src:["S-16","S-17"] },
+      { s:"soft", t:"gb", kind:"candidate", rel:"no sample document combines them", src:[] },
+    ],
+    focus: "gb",
+    hypothesis: <>Lattice softness measured in the bulk may predict conductivity poorly in polycrystalline samples, because <em>grain boundaries can dominate resistance</em>. A predictor that combines a softness measure with grain-boundary density may outperform either one alone.</>,
+    chain: ["Lattice softness","Hopping barrier","Bulk conductivity","Grain-boundary density","Measured conductivity"],
+    prediction: "Across one compound family sintered at several temperatures, a combined predictor explains more variance in measured conductivity than softness alone.",
+    falsify: "Adding grain-boundary density gives no improvement over softness alone across sintering conditions.",
+    scores: { confidence: 0.41, novelty: 0.47, testability: 0.74 },
+    evidence: [
+      { id:"S-04", txt:"Softness descriptors correlate with conductivity in single-crystal samples.", stance:"supports", w:3 },
+      { id:"S-09", txt:"Anion framework geometry sets the minimum hopping barrier in computed structures.", stance:"context", w:2 },
+      { id:"S-12", txt:"Aliovalent doping raises vacancy concentration and bulk conductivity.", stance:"context", w:2 },
+      { id:"S-17", txt:"Sintering temperature changes grain-boundary density and total measured resistance.", stance:"supports", w:2 },
+      { id:"S-16", txt:"For one compound family, single-crystal and polycrystalline conductivities are similar.", stance:"contradicts", w:2 },
+    ],
+    limits: [
+      "S-16 shows that grain boundaries matter little in at least one family, so any benefit may be family-specific.",
+      "Softness descriptors in S-04 are computed, not measured. Measured and computed values may disagree.",
+      "Grain-boundary density is hard to quantify consistently, which adds noise to any combined predictor.",
+      "The sample corpus holds 24 synthetic abstracts. A real search may find this combination already tested.",
+    ],
+  },
+  {
+    id: "fungi",
+    chip: "Fungal networks and drought recovery",
+    question: "How might soil fungal networks influence how grasslands recover after drought?",
+    keywords: ["fungal","fungi","mycorrhizal","soil","drought","grassland","grasslands","recovery","ecology","plant","plants","water","climate","root","roots"],
+    stats: { retrieved: 8, claims: 27, gaps: 5 },
+    nodes: [
+      { id:"myc", label:"Mycorrhizal networks", type:"concept" },
+      { id:"water", label:"Water redistribution", type:"mechanism" },
+      { id:"carb", label:"Root carbon allocation", type:"mechanism" },
+      { id:"stress", label:"Drought stress", type:"concept" },
+      { id:"rec", label:"Recovery rate", type:"concept" },
+      { id:"agg", label:"Soil aggregate stability", type:"gap" },
+      { id:"rewet", label:"First rewetting", type:"concept" },
+      { id:"infil", label:"Infiltration", type:"mechanism" },
+      { id:"comp", label:"Species composition", type:"concept" },
+    ],
+    edges: [
+      { s:"myc", t:"water", kind:"reported", rel:"enables", src:["S-05"] },
+      { s:"water", t:"stress", kind:"contested", rel:"small measured effect", src:["S-05","S-20"] },
+      { s:"stress", t:"carb", kind:"reported", rel:"reduces", src:["S-08"] },
+      { s:"carb", t:"myc", kind:"reported", rel:"sustains", src:["S-08"] },
+      { s:"stress", t:"rec", kind:"reported", rel:"slows", src:["S-13"] },
+      { s:"comp", t:"rec", kind:"reported", rel:"modulates", src:["S-13"] },
+      { s:"myc", t:"agg", kind:"reported", rel:"binds soil into", src:["S-15"] },
+      { s:"rewet", t:"infil", kind:"reported", rel:"tests", src:["S-18"] },
+      { s:"infil", t:"rec", kind:"inferred", rel:"may speed", src:["S-18"] },
+      { s:"agg", t:"rewet", kind:"candidate", rel:"no sample document links them", src:[] },
+    ],
+    focus: "agg",
+    hypothesis: <>Fungal networks may speed grassland recovery after drought less by moving water during the drought than by <em>keeping soil structure intact</em>, which shapes how the first rains afterwards soak in.</>,
+    chain: ["Mycorrhizal networks","Aggregate stability","First rewetting","Infiltration","Recovery rate"],
+    prediction: "Plots with intact fungal networks show higher infiltration at first rewetting, and that difference accounts for more of the recovery gap than water redistribution does.",
+    falsify: "Infiltration at rewetting is similar with and without intact networks, while recovery still differs.",
+    scores: { confidence: 0.33, novelty: 0.58, testability: 0.62 },
+    evidence: [
+      { id:"S-15", txt:"Fungal hyphae contribute to soil aggregate formation in a field survey.", stance:"supports", w:2 },
+      { id:"S-18", txt:"Infiltration during the first rain after drought predicts early regrowth in a mesocosm.", stance:"supports", w:2 },
+      { id:"S-05", txt:"Hyphal networks can move water between plants under controlled conditions.", stance:"context", w:2 },
+      { id:"S-20", txt:"Water moved by networks was a small share of plant water use in the field.", stance:"supports", w:1 },
+      { id:"S-13", txt:"Recovery after drought varies strongly with plant species composition.", stance:"contradicts", w:2 },
+    ],
+    limits: [
+      "S-13 shows species composition alone explains much of the variation in recovery, which could swamp the proposed effect.",
+      "Aggregate stability and network integrity are hard to separate in the field.",
+      "Mesocosm results (S-18) may not hold at grassland scale.",
+      "The sample corpus holds 24 synthetic abstracts. A real search could reveal existing work on this mechanism.",
+    ],
+  },
+];
+
+const STOP = new Set("a an the of in on for to and or with without by from how why what which who whom whose when where could would should might may can do does did is are was were be been being there their they them this that these those it its into about after before between over under than then as at if not no more less some any much many very our your my we you i change changes changing affect affects influence influences predict predicts".split(" "));
+
+function keyTerms(q){
+  const words = q.toLowerCase().replace(/[^a-z0-9\s-]/g," ").split(/\s+/).filter(w => w.length > 2 && !STOP.has(w));
+  return [...new Set(words)].slice(0,6);
+}
+function matchScenario(q){
+  const words = keyTerms(q);
+  let best = null, bestScore = 0;
+  for(const s of SCENARIOS){
+    let sc = 0;
+    for(const w of words) if(s.keywords.some(k => k.startsWith(w) || w.startsWith(k))) sc++;
+    if(sc > bestScore){ bestScore = sc; best = s; }
+  }
+  return { scenario: best || SCENARIOS[0], matched: !!best };
+}
+function buildSteps(q, s, matched){
+  const terms = keyTerms(q);
+  const contra = s.evidence.filter(e => e.stance === "contradicts").length;
+  return [
+    { label:"Parse question", detail: terms.length ? "Key terms: " + terms.join(" · ") : "No key terms found" },
+    { label:"Match to sample corpus", detail: matched ? `Closest sample scenario: ${s.chip}` : `No close match. Using the default sample scenario: ${s.chip}` },
+    { label:"Retrieve documents", detail: `${s.stats.retrieved} of 24 synthetic abstracts selected` },
+    { label:"Extract claims", detail: `${s.stats.claims} claims, each with conditions and method` },
+    { label:"Assemble knowledge graph", detail: `${s.nodes.length} concepts · ${s.edges.length} relations` },
+    { label:"Search for unexamined links", detail: `${s.stats.gaps} candidate gaps · 1 ranked highest` },
+    { label:"Draft hypotheses", detail: "3 drafted from the top-ranked gap" },
+    { label:"Critique against evidence", detail: `1 retained · ${contra} contradicting finding${contra===1?"":"s"} flagged` },
+  ];
+}
+
+/* ---------------- HERO FIGURE: Lorenz attractor ---------------- */
+function Lorenz(){
+  const ref = useRef(null);
+  useEffect(() => {
+    const c = ref.current, ctx = c.getContext("2d");
+    const pts = [];
+    let x = .1, y = 0, z = 0;
+    const s = 10, r = 28, b = 8/3, dt = .005;
+    for(let i = 0; i < 14000; i++){
+      const dx = s*(y-x), dy = x*(r-z)-y, dz = x*y-b*z;
+      x += dx*dt; y += dy*dt; z += dz*dt;
+      if(i > 400) pts.push([x,y,z]);
+    }
+    const N = pts.length;
+    const ivory = css("--ivory") || "#ECE6D8", blue = css("--blue") || "#8DB0DF";
+    const hex = (h,a) => { const n = parseInt(h.slice(1),16); return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`; };
+    let W = 0, H = 0, raf = 0, visible = true;
+    const size = () => {
+      const rc = c.getBoundingClientRect(), d = Math.min(window.devicePixelRatio || 1, 2);
+      W = rc.width; H = rc.height; c.width = W*d; c.height = H*d; ctx.setTransform(d,0,0,d,0,0);
+    };
+    size();
+    const ro = new ResizeObserver(() => { size(); if(REDUCE) draw(); });
+    ro.observe(c);
+    let head = REDUCE ? N-1 : 4200, full = REDUCE, th = .7;
+    function draw(){
+      ctx.clearRect(0,0,W,H);
+      const sc = Math.min(W, H*1.15) / 64, cx = W/2, cy = H/2 + H*.02;
+      const ct = Math.cos(th), st = Math.sin(th);
+      const P = (p) => { const X = p[0]*ct - p[1]*st, D = p[0]*st + p[1]*ct; const k = 1 + D*.005; return [cx + X*sc*k, cy - (p[2]-24)*sc*k]; };
+      const drawn = full ? N : head;
+      ctx.lineWidth = .55; ctx.strokeStyle = hex(ivory, .17);
+      ctx.beginPath();
+      for(let i = 0; i < drawn; i++){ const q = P(pts[i]); i ? ctx.lineTo(q[0],q[1]) : ctx.moveTo(q[0],q[1]); }
+      ctx.stroke();
+      if(!REDUCE){
+        const T = 520, seg = 26;
+        for(let k = T; k > 0; k -= seg){
+          ctx.beginPath();
+          for(let j = 0; j <= seg; j++){
+            let i = head - k + j; i = ((i % N) + N) % N;
+            const q = P(pts[i]); j ? ctx.lineTo(q[0],q[1]) : ctx.moveTo(q[0],q[1]);
+          }
+          const a = 1 - k/T;
+          ctx.strokeStyle = hex(blue, .08 + a*.8); ctx.lineWidth = .6 + a*1.1; ctx.stroke();
+        }
+        const h = P(pts[head % N]);
+        const g = ctx.createRadialGradient(h[0],h[1],0,h[0],h[1],14);
+        g.addColorStop(0, hex(blue,.55)); g.addColorStop(1, hex(blue,0));
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(h[0],h[1],14,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle = ivory; ctx.beginPath(); ctx.arc(h[0],h[1],1.8,0,Math.PI*2); ctx.fill();
+      }
+    }
+    function loop(){
+      if(visible){
+        head += full ? 7 : 22;
+        if(!full && head >= N){ full = true; }
+        head = full ? head % N : head;
+        th += .0016;
+        draw();
+      }
+      raf = requestAnimationFrame(loop);
+    }
+    draw();
+    if(!REDUCE) raf = requestAnimationFrame(loop);
+    const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; });
+    io.observe(c);
+    return () => { cancelAnimationFrame(raf); ro.disconnect(); io.disconnect(); };
+  }, []);
+  return <canvas ref={ref} aria-label="Animated Lorenz attractor, a chaotic trajectory traced in three dimensions"></canvas>;
+}
+
+/* ---------------- KNOWLEDGE GRAPH ---------------- */
+function mulberry(a){ return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+function Graph({ scenario, selected, onSelect }){
+  const box = useRef(null);
+  const [dim, setDim] = useState({ w: 640, h: 440 });
+  const [pos, setPos] = useState(null);
+  useEffect(() => {
+    const el = box.current;
+    const ro = new ResizeObserver(([e]) => { const r = e.contentRect; if(r.width > 0) setDim({ w: r.width, h: Math.max(r.height, 380) }); });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  useEffect(() => {
+    const { w, h } = dim;
+    const nodes = scenario.nodes, idx = Object.fromEntries(nodes.map((n,i) => [n.id, i]));
+    const rnd = mulberry(scenario.id.length * 97 + 13);
+    const P = nodes.map((n,i) => { const a = i/nodes.length*Math.PI*2; return { x: w/2 + Math.cos(a)*w*.08 + (rnd()-.5)*10, y: h/2 + Math.sin(a)*h*.08 + (rnd()-.5)*10, vx:0, vy:0 }; });
+    const L = Math.min(w, h) * (w < 520 ? .30 : .26);
+    const padX = w < 520 ? 34 : 70, padY = 34;
+    let alpha = 1, raf = 0, ticks = 0;
+    const tick = () => {
+      for(let i = 0; i < P.length; i++) for(let j = i+1; j < P.length; j++){
+        let dx = P[j].x - P[i].x, dy = P[j].y - P[i].y; let d2 = dx*dx + dy*dy; if(d2 < 1) d2 = 1;
+        const f = (L*L*.9) / d2 * alpha, d = Math.sqrt(d2);
+        P[i].vx -= dx/d*f; P[i].vy -= dy/d*f; P[j].vx += dx/d*f; P[j].vy += dy/d*f;
+      }
+      for(const e of scenario.edges){
+        const a = P[idx[e.s]], b = P[idx[e.t]];
+        const dx = b.x - a.x, dy = b.y - a.y, d = Math.sqrt(dx*dx + dy*dy) || 1;
+        const f = (d - L) * .045 * alpha;
+        a.vx += dx/d*f; a.vy += dy/d*f; b.vx -= dx/d*f; b.vy -= dy/d*f;
+      }
+      for(const p of P){
+        p.vx += (w/2 - p.x) * .012 * alpha; p.vy += (h/2 - p.y) * .02 * alpha;
+        p.vx *= .78; p.vy *= .78; p.x += p.vx; p.y += p.vy;
+        p.x = Math.max(padX, Math.min(w - padX, p.x)); p.y = Math.max(padY, Math.min(h - padY, p.y));
+      }
+      alpha *= .985; ticks++;
+    };
+    if(REDUCE){ for(let i = 0; i < 300; i++) tick(); setPos(P.map(p => ({ x:p.x, y:p.y }))); return; }
+    const loop = () => {
+      tick(); tick();
+      setPos(P.map(p => ({ x:p.x, y:p.y })));
+      if(ticks < 300) raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
+  }, [scenario, dim.w, dim.h]);
+
+  const idx = useMemo(() => Object.fromEntries(scenario.nodes.map((n,i) => [n.id, i])), [scenario]);
+  const neigh = useMemo(() => {
+    if(!selected) return null;
+    const s = new Set([selected]);
+    scenario.edges.forEach(e => { if(e.s === selected) s.add(e.t); if(e.t === selected) s.add(e.s); });
+    return s;
+  }, [selected, scenario]);
+
+  return (
+    <div className="graph-box" ref={box}>
+      {pos && (
+        <svg viewBox={`0 0 ${dim.w} ${dim.h}`} role="img" aria-label="Knowledge graph built from the sample corpus">
+          <g>
+            {scenario.edges.map((e,i) => {
+              const a = pos[idx[e.s]], b = pos[idx[e.t]];
+              const on = selected && (e.s === selected || e.t === selected);
+              const cls = `edge ${e.kind} ${selected ? (on ? "hl" : "dim") : ""}`;
+              const mx = (a.x+b.x)/2, my = (a.y+b.y)/2, dx = b.x-a.x, dy = b.y-a.y, d = Math.hypot(dx,dy)||1;
+              const cxp = mx - dy/d*18, cyp = my + dx/d*18;
+              return (
+                <g key={i}>
+                  <path className={cls} d={`M${a.x},${a.y} Q${cxp},${cyp} ${b.x},${b.y}`} />
+                  {e.kind === "candidate" && <text className="edge-q" x={(a.x+2*cxp+b.x)/4} y={(a.y+2*cyp+b.y)/4 - 6} textAnchor="middle">?</text>}
+                </g>
+              );
+            })}
+          </g>
+          <g>
+            {scenario.nodes.map((n,i) => {
+              const p = pos[i];
+              const right = p.x < dim.w * .62;
+              const r = n.type === "gap" ? 7 : n.type === "mechanism" ? 5 : 5.5;
+              const cls = `node ${n.type} ${selected === n.id ? "sel" : ""} ${neigh && !neigh.has(n.id) ? "dim" : ""}`;
+              return (
+                <g key={n.id} className={cls} transform={`translate(${p.x},${p.y})`}
+                   tabIndex="0" role="button" aria-label={`${n.label}, ${n.type === "gap" ? "candidate gap" : n.type}`}
+                   onClick={() => onSelect(n.id)} onKeyDown={(ev) => { if(ev.key === "Enter" || ev.key === " "){ ev.preventDefault(); onSelect(n.id); } }}>
+                  <circle r="18" fill="transparent" />
+                  <circle className="halo" r={r + 7} />
+                  <circle className="core" r={r} />
+                  <text x={right ? 12 : -12} y="4" textAnchor={right ? "start" : "end"}>{n.label}</text>
+                </g>
+              );
+            })}
+          </g>
+        </svg>
+      )}
+    </div>
+  );
+}
+
+function Inspector({ scenario, selected }){
+  const node = scenario.nodes.find(n => n.id === selected);
+  if(!node) return (
+    <div className="inspector"><span className="mono">Inspector</span><p style={{fontSize:14,color:"var(--ivory-3)"}}>Select a node to see its relations and the sample documents behind them.</p></div>
+  );
+  const name = (id) => scenario.nodes.find(n => n.id === id).label;
+  const rel = scenario.edges.filter(e => e.s === node.id || e.t === node.id);
+  const typeLabel = node.type === "gap" ? "Candidate gap" : node.type === "mechanism" ? "Mechanism" : "Concept";
+  return (
+    <div className="inspector">
+      <div className="ins-head">
+        <h4>{node.label}</h4>
+        <span className="mono" style={node.type === "gap" ? {color:"var(--blue)"} : null}>{typeLabel} · {rel.length} relation{rel.length===1?"":"s"}</span>
+      </div>
+      <div className="ins-list">
+        {rel.map((e,i) => {
+          const other = e.s === node.id ? name(e.t) : name(e.s);
+          const dir = e.s === node.id ? `${e.rel} → ${other}` : `${other} → ${e.rel}`;
+          return (
+            <div className="ins-item" key={i}>
+              <span className={`kind ${e.kind}`}>{e.kind === "candidate" ? "Candidate" : e.kind}</span>
+              <span>{dir}</span>
+              <span className="src">{e.src.length ? e.src.join(", ") : "none"}</span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ---------------- REPORT ---------------- */
+function Score({ label, v, note, animate }){
+  const word = v < .35 ? "Low" : v < .6 ? "Moderate" : "High";
+  return (
+    <div className="score">
+      <div className="score-top"><span className="mono">{label}</span><strong>{word}<small>{v.toFixed(2)}</small></strong></div>
+      <div className="bar"><i style={{ width: animate ? `${v*100}%` : `${v*100}%` }}></i></div>
+      <p>{note}</p>
+    </div>
+  );
+}
+
+function Report({ s, qid }){
+  return (
+    <div className="report fadein" key={qid}>
+      <div className="c-bar">
+        <span className="mono"><b>Example hypothesis</b> · {s.chip}</span>
+        <span className="mono" style={{color:"var(--blue)"}}>Sample output</span>
+      </div>
+      <div className="report-body">
+        <div className="r-main">
+          <p className="hyp">{s.hypothesis}</p>
+          <div className="chain" aria-label="Proposed mechanism chain">
+            {s.chain.map((c,i) => (
+              <React.Fragment key={i}>
+                {i > 0 && <span className="a">→</span>}
+                <span className={`n ${s.nodes.find(n => n.id === s.focus).label.toLowerCase().includes(c.toLowerCase()) ? "gap" : ""}`}>{c}</span>
+              </React.Fragment>
+            ))}
+          </div>
+          <div className="pair">
+            <div><span className="mono">Predicted observation</span><p>{s.prediction}</p></div>
+            <div><span className="mono">Would be falsified if</span><p>{s.falsify}</p></div>
+          </div>
+        </div>
+        <div className="r-side">
+          <Score label="Confidence" v={s.scores.confidence} note="Weighted by evidence strength and the contradicting finding." />
+          <Score label="Novelty" v={s.scores.novelty} note="Share of the chain not examined together in the sample corpus." />
+          <Score label="Testability" v={s.scores.testability} note="Whether the prediction names a measurable quantity and a control." />
+          <p className="mono" style={{lineHeight:1.6}}>Illustrative values. Not calibrated.</p>
+        </div>
+      </div>
+      <div className="ev">
+        <div className="ev-head">
+          <h4>Evidence</h4>
+          <span className="mono">Synthetic abstracts · sample corpus S-01</span>
+        </div>
+        <div className="ev-table">
+          <div className="ev-row h"><span className="mono">ID</span><span className="mono">Finding (synthetic)</span><span className="mono">Stance</span><span className="mono">Weight</span></div>
+          {s.evidence.map(e => (
+            <div className="ev-row" key={e.id}>
+              <span className="id">{e.id}</span>
+              <span className="txt">{e.txt}</span>
+              <span className={`stance ${e.stance}`}>{e.stance}</span>
+              <span className="wt" aria-label={`weight ${e.w} of 3`}>{[1,2,3].map(k => <i key={k} className={k <= e.w ? "f" : ""}></i>)}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="limits">
+        <h4>Limitations</h4>
+        <ol>{s.limits.map((l,i) => <li key={i}><span>{l}</span></li>)}</ol>
+      </div>
+      <div className="report-foot">
+        <span className="mono">Every document ID above refers to a synthetic abstract written for this demo. None is a real publication.</span>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------- ENGINE ---------------- */
+function Engine(){
+  const initial = SCENARIOS[0];
+  const [q, setQ] = useState(initial.question);
+  const [active, setActive] = useState({ s: initial, matched: true, q: initial.question, run: 0 });
+  const [steps, setSteps] = useState(() => buildSteps(initial.question, initial, true));
+  const [progress, setProgress] = useState(8);
+  const [times, setTimes] = useState(() => buildSteps("", initial, true).map((_,i) => (0.3 + i*0.42).toFixed(1)));
+  const [selected, setSelected] = useState(initial.focus);
+  const timers = useRef([]);
+  const running = progress < steps.length;
+
+  const run = useCallback((text, forced) => {
+    const question = text.trim() || initial.question;
+    const { scenario, matched } = forced ? { scenario: forced, matched: true } : matchScenario(question);
+    timers.current.forEach(clearTimeout); timers.current = [];
+    const st = buildSteps(question, scenario, matched);
+    const ts = st.map((_,i) => (0.2 + i*(0.35 + (i%3)*0.08) + Math.random()*0.1).toFixed(1));
+    setSteps(st); setTimes(ts); setProgress(0); setSelected(null);
+    setActive(a => ({ s: scenario, matched, q: question, run: a.run + 1 }));
+    const gap = REDUCE ? 60 : 560;
+    st.forEach((_,i) => {
+      timers.current.push(setTimeout(() => {
+        setProgress(i+1);
+        if(i+1 === st.length) setSelected(scenario.focus);
+      }, gap*(i+1) + (i===4 ? 200 : 0)));
+    });
+  }, []);
+  useEffect(() => () => timers.current.forEach(clearTimeout), []);
+
+  const onSubmit = (e) => { e.preventDefault(); if(!running) run(q); };
+  const pick = (s) => { setQ(s.question); if(!running) run(s.question, s); };
+  const graphReady = progress >= 5;
+  const done = progress >= steps.length;
+
+  return (
+    <section id="engine" className="engine">
+      <div className="wrap sec">
+        <div className="sec-grid">
+          <div className="margin"><span className="rule"></span><span className="mono"><b>Discovery Engine</b></span><span className="mono">Scripted demo · not a prototype</span></div>
+          <div style={{minWidth:0}}>
+            <h2 className="h2">Discovery Engine <em>· a working sketch</em></h2>
+            <p className="lede" style={{marginTop:24}}>Ask a research question and watch how a discovery system could approach it: read, connect, find an unexamined link, propose a hypothesis, then argue against it. This is a scripted simulation. No model runs here.</p>
+            <div className="sample-banner" role="note">
+              <span className="tag">Sample data</span>
+              <p>Every document, finding and score in this demo is synthetic. Questions are matched to one of three prepared scenarios.</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="console">
+          <div className="c-left">
+            <div className="c-bar"><div className="dots"><i></i><i></i><i></i></div><span className="mono">Query</span></div>
+            <form className="qform" onSubmit={onSubmit}>
+              <label htmlFor="question">Research question</label>
+              <textarea id="question" value={q} onChange={e => setQ(e.target.value)} rows="3"
+                onKeyDown={e => { if(e.key === "Enter" && (e.metaKey || e.ctrlKey)) onSubmit(e); }} />
+              <div className="chips" role="group" aria-label="Sample questions">
+                {SCENARIOS.map(s => <button type="button" key={s.id} className={`chip ${active.s.id === s.id ? "on" : ""}`} onClick={() => pick(s)} disabled={running}>{s.chip}</button>)}
+              </div>
+              <div className="qrow">
+                <span className="hint">Sample corpus S-01 · 24 synthetic abstracts</span>
+                <button className="btn blue" type="submit" disabled={running}>{running ? "Analysing…" : "Run analysis"} <span className="arr">→</span></button>
+              </div>
+            </form>
+            <div className="log" aria-live="polite">
+              <span className="mono" style={{paddingBottom:6}}>Analysis log</span>
+              {steps.map((st,i) => {
+                const state = i < progress ? "done" : i === progress ? "active" : "pending";
+                return (
+                  <div className={`log-row ${state}`} key={`${active.run}-${i}`}>
+                    <span className="st"></span>
+                    <div style={{minWidth:0}}><div className="lb">{st.label}</div>{state === "done" && <div className="dt">{st.detail}</div>}</div>
+                    <span className="tm">{state === "done" ? `t+${times[i]}s` : ""}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          <div className="c-right">
+            <div className="c-bar">
+              <span className="mono"><b>Knowledge graph</b>{graphReady ? ` · ${active.s.nodes.length} nodes` : ""}</span>
+              <span className="mono">{graphReady ? "Select a node" : "Waiting"}</span>
+            </div>
+            {graphReady
+              ? <Graph key={active.run} scenario={active.s} selected={selected} onSelect={setSelected} />
+              : <div className="graph-box"><div className="g-empty"><span className="mono">Stage {Math.min(progress+1,5)} of 8</span><p>The graph assembles once claims have been extracted.</p></div></div>}
+            <div className="legend">
+              <span><svg width="26" height="6"><line x1="0" y1="3" x2="26" y2="3" className="edge reported"/></svg>Reported</span>
+              <span><svg width="26" height="6"><line x1="1" y1="3" x2="26" y2="3" className="edge inferred"/></svg>Inferred</span>
+              <span><svg width="26" height="6"><line x1="0" y1="3" x2="26" y2="3" className="edge contested"/></svg>Contested</span>
+              <span><svg width="26" height="6"><line x1="0" y1="3" x2="26" y2="3" className="edge candidate"/></svg>Candidate link</span>
+              <span><svg width="12" height="12"><circle cx="6" cy="6" r="4.5" fill="var(--panel)" stroke="var(--ivory-2)"/></svg>Mechanism</span>
+            </div>
+            {graphReady && <Inspector scenario={active.s} selected={selected} />}
+          </div>
+        </div>
+
+        {done
+          ? <Report s={active.s} qid={active.run} />
+          : <div className="report"><div className="c-bar"><span className="mono"><b>Example hypothesis</b></span><span className="mono">Pending critique</span></div>
+              <div className="skeleton"><div className="sk" style={{width:"86%",height:22}}></div><div className="sk" style={{width:"70%",height:22}}></div><div className="sk" style={{width:"40%"}}></div><p style={{fontSize:14,color:"var(--ivory-3)",marginTop:8}}>The hypothesis appears after it has been checked against the evidence.</p></div></div>}
+      </div>
+    </section>
+  );
+}
+
+/* ---------------- PAGE ---------------- */
+const NAV = [["home","Home"],["research","Research"],["results","Results"],["technology","Technology"],["about","About"],["team","Team"],["engine","Discovery Engine"]];
+
+const FOUNDERS = [
+  { name:"Noah Schlaff", role:"Co-Founder & CEO", init:"NS" },
+  { name:"Kopano Mokhoa", role:"Co-Founder", init:"KM" },
+];
+
+function Team(){
+  return (
+    <section id="team">
+      <div className="wrap sec">
+        <div className="sec-grid">
+          <div className="margin"><span className="rule"></span><span className="mono"><b>Founding Team</b></span><span className="mono">2 co-founders</span></div>
+          <div style={{minWidth:0}}>
+            <h2 className="h2">The people <em>starting</em> NOEMA</h2>
+            <p className="lede" style={{marginTop:24}}>NOEMA was founded by two people. Profiles here stay brief while the venture is at an early, experimental stage.</p>
+            <div className="founders">
+              {FOUNDERS.map((f,i) => (
+                <article className="founder" key={f.name}>
+                  <div className="orbit" aria-hidden="true">
+                    <svg viewBox="0 0 120 120">
+                      <circle cx="60" cy="60" r="56" fill="none" stroke="var(--line-2)" strokeWidth=".8"/>
+                      <g className="ring" style={{transform:`rotate(${-28 + i*34}deg)`}}>
+                        <ellipse cx="60" cy="60" rx="56" ry="20" fill="none" stroke="var(--ivory-4)" strokeWidth=".7"/>
+                        <circle cx="116" cy="60" r="3" fill="var(--blue)"/>
+                      </g>
+                    </svg>
+                    <span className="init">{f.init}</span>
+                  </div>
+                  <div className="f-text">
+                    <h3>{f.name}</h3>
+                    <span className={`mono ${i === 0 ? "lead" : ""}`}>{f.role}</span>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Mark(){
+  return (
+    <svg className="brand-mark" viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="12" r="10.5" fill="none" stroke="var(--ivory)" strokeWidth=".9"/>
+      <ellipse cx="12" cy="12" rx="10.5" ry="4" fill="none" stroke="var(--ivory-3)" strokeWidth=".7" transform="rotate(-28 12 12)"/>
+      <circle cx="16.2" cy="9.1" r="1.7" fill="var(--blue)"/>
+    </svg>
+  );
+}
+
+function Nav(){
+  const [on, setOn] = useState("home");
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    const els = NAV.map(([id]) => document.getElementById(id)).filter(Boolean);
+    const io = new IntersectionObserver((es) => {
+      es.forEach(e => { if(e.isIntersecting) setOn(e.target.id); });
+    }, { rootMargin: "-45% 0px -50% 0px" });
+    els.forEach(el => io.observe(el));
+    return () => io.disconnect();
+  }, []);
+  return (
+    <nav className="nav" aria-label="Primary">
+      <div className="wrap">
+        <a className="brand" href="#home" aria-label="NOEMA home"><Mark /><span className="brand-word">NOEMA</span></a>
+        <button className="menu-btn" aria-expanded={open} aria-controls="navlinks" onClick={() => setOpen(o => !o)}>{open ? "Close" : "Menu"}</button>
+        <ul id="navlinks" className={`navlinks ${open ? "open" : ""}`}>
+          {NAV.map(([id,label]) => (
+            <li key={id}><a href={`#${id}`} className={`${on === id ? "on" : ""} ${id === "engine" ? "engine-link" : ""}`} onClick={() => setOpen(false)}>{label}</a></li>
+          ))}
+        </ul>
+      </div>
+    </nav>
+  );
+}
+
+function Hero(){
+  return (
+    <section id="home" className="hero">
+      <div className="wrap">
+        <div className="hero-copy">
+          <span className="mono"><b>NOEMA</b> · Toward computational scientific discovery</span>
+          <h1>Discovery begins <span className="l2">where knowledge <span>ends.</span></span></h1>
+          <p className="lede quote">“We are exploring a new class of computational systems designed not merely to retrieve existing knowledge, but to generate, challenge, and refine scientific hypotheses.”</p>
+          <div className="cta-row">
+            <a className="btn primary" href="#engine">Try the Discovery Engine <span className="arr">→</span></a>
+            <a className="btn" href="#research">Explore the five programs</a>
+          </div>
+          <div className="status">
+            <span className="pulse" aria-hidden="true"></span>
+            <p><b>Experimental and pre-product.</b> 5 proposed research programs · 0 working prototypes · 0 independently verified findings. The Discovery Engine is a scripted demonstration on sample data.</p>
+          </div>
+        </div>
+        <figure className="figure" style={{margin:0}}>
+          <Lorenz />
+          <figcaption className="fig-cap">
+            <span className="mono"><b>Fig. 1</b> · Lorenz system, integrated in your browser</span>
+            <div className="eq"><span><i>ẋ</i> = σ(y − x)</span><span><i>ẏ</i> = x(ρ − z) − y</span><span><i>ż</i> = xy − βz</span><span>σ = 10 · ρ = 28 · β = 8/3</span></div>
+            <p>Three short equations whose long-run behaviour can't be read off the page. You have to run them to see it.</p>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+  );
+}
+
+/* ---------------- MATURITY ---------------- */
+const LEVELS = [
+  { name:"Proposed direction", short:"Proposed", def:"A defined problem, a formalism and an evaluation plan. No system has been built.", count:5 },
+  { name:"Working prototype", short:"Prototype", def:"Running code tested internally. Results have not been checked by anyone outside NOEMA.", count:0 },
+  { name:"Independently verified", short:"Verified", def:"A result reproduced by an outside party from released code, data and protocol.", count:0 },
+];
+function MIcon({ level, on = true }){
+  const c = on ? "var(--blue)" : "var(--ivory-4)";
+  return (
+    <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" style={{flex:"none"}}>
+      <circle cx="6" cy="6" r="5" fill="none" stroke={c} strokeWidth="1"/>
+      {level === 1 && <path d="M6 1 A5 5 0 0 1 6 11 Z" fill={c}/>}
+      {level === 2 && <circle cx="6" cy="6" r="5" fill={c}/>}
+    </svg>
+  );
+}
+function Track({ level = 0 }){
+  return (
+    <div className="track" aria-label={`Maturity: ${LEVELS[level].name}`}>
+      {LEVELS.map((l,i) => (
+        <span key={i} className={i === level ? "cur" : i < level ? "past" : ""}><MIcon level={i} on={i <= level} />{l.short}</span>
+      ))}
+    </div>
+  );
+}
+
+/* ---------------- VIZ PRIMITIVES ---------------- */
+function Viz({ title, tag, children, readout, controls }){
+  return (
+    <figure className="viz">
+      <div className="viz-bar"><span className="mono"><b>{title}</b></span><span className="vtag">{tag}</span></div>
+      <div className="viz-body">{children}</div>
+      {readout && <div className="viz-read">{readout}</div>}
+      {controls && <div className="viz-ctl">{controls}</div>}
+    </figure>
+  );
+}
+function Slider({ id, label, min, max, step, value, onChange, fmt }){
+  return (
+    <label className="sl" htmlFor={id}>
+      <span className="sl-top"><span>{label}</span><b>{fmt ? fmt(value) : value}</b></span>
+      <input id={id} type="range" min={min} max={max} step={step} value={value} onChange={e => onChange(parseFloat(e.target.value))} />
+    </label>
+  );
+}
+function gauss(r){ let u = 0; while(!u) u = r(); return Math.sqrt(-2*Math.log(u)) * Math.cos(2*Math.PI*r()); }
+
+/* I. Theory formation: two-part MDL over polynomial theories (real computation, synthetic data) */
+const MDL = (() => {
+  const rnd = mulberry(7), n = 24, xs = [], ys = [];
+  for(let i = 0; i < n; i++){ const x = -1 + 2*i/(n-1) + (rnd()-.5)*.04; xs.push(x); ys.push(1.6*x*x*x - 1.2*x + .12*gauss(rnd)); }
+  const fit = (k) => {
+    const m = k + 1, A = Array.from({length:m}, () => new Array(m+1).fill(0));
+    for(let i = 0; i < n; i++){
+      const p = []; let v = 1; for(let j = 0; j < m; j++){ p.push(v); v *= xs[i]; }
+      for(let a = 0; a < m; a++){ for(let b = 0; b < m; b++) A[a][b] += p[a]*p[b]; A[a][m] += p[a]*ys[i]; }
+    }
+    for(let c = 0; c < m; c++){
+      let pv = c; for(let r = c+1; r < m; r++) if(Math.abs(A[r][c]) > Math.abs(A[pv][c])) pv = r;
+      [A[c], A[pv]] = [A[pv], A[c]];
+      for(let r = 0; r < m; r++){ if(r === c) continue; const f = A[r][c]/A[c][c]; for(let q = c; q <= m; q++) A[r][q] -= f*A[c][q]; }
+    }
+    const coef = A.map((row,i) => row[m]/row[i]);
+    const f = (x) => { let s = 0, v = 1; for(const c of coef){ s += c*v; v *= x; } return s; };
+    let rss = 0; for(let i = 0; i < n; i++){ const e = ys[i] - f(xs[i]); rss += e*e; }
+    const LH = (k+1) * (0.5*Math.log2(n) + 3);
+    const LD = Math.max(0, n/2 * Math.log2(2*Math.PI*Math.E*(rss/n)/1e-4));
+    return { f, LH, LD, T: LH + LD };
+  };
+  const fits = [...Array(9)].map((_,k) => fit(k));
+  const best = fits.reduce((b,f,i) => f.T < fits[b].T ? i : b, 0);
+  return { xs, ys, fits, best, n };
+})();
+
+function TheoryViz(){
+  const [k, setK] = useState(7);
+  const W = 320, H = 220, pl = 28, pr = 10, pt = 14, pb = 26;
+  const X = x => pl + (x + 1.1)/2.2*(W-pl-pr), Y = y => pt + (0.8 - y)/1.6*(H-pt-pb);
+  const F = MDL.fits[k];
+  let d = ""; for(let i = 0; i <= 120; i++){ const x = -1.05 + 2.1*i/120; d += (i ? "L" : "M") + X(x).toFixed(1) + "," + Y(Math.max(-.85, Math.min(.85, F.f(x)))).toFixed(1); }
+  const maxT = Math.max(...MDL.fits.map(f => f.T));
+  const bw = 26, bh = H - pt - pb, bx0 = 30;
+  return (
+    <Viz title="Fig. I · Description length by theory" tag="Live computation · synthetic data"
+      readout={<><span>k = {k}</span><span>L(H) = {F.LH.toFixed(1)} bits</span><span>L(D|H) = {F.LD.toFixed(1)} bits</span><span className={k === MDL.best ? "hl" : ""}>Total = {F.T.toFixed(1)} bits{k === MDL.best ? " · minimum" : ""}</span></>}
+      controls={<Slider id="mdl-k" label="Theory complexity · polynomial degree k" min={0} max={8} step={1} value={k} onChange={setK} />}>
+      <div className="viz-2">
+        <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Polynomial of degree ${k} fitted to ${MDL.n} synthetic observations`}>
+          <defs><clipPath id="mdlclip"><rect x={pl} y={pt} width={W-pl-pr} height={H-pt-pb}/></clipPath></defs>
+          {[-.5,0,.5].map(v => <g key={v}><line x1={pl} x2={W-pr} y1={Y(v)} y2={Y(v)} className="gridl"/><text x={pl-6} y={Y(v)+3} className="axt" textAnchor="end">{v}</text></g>)}
+          {[-1,0,1].map(v => <text key={v} x={X(v)} y={H-8} className="axt" textAnchor="middle">{v}</text>)}
+          <path d={d} className="fitc" clipPath="url(#mdlclip)"/>
+          {MDL.xs.map((x,i) => <circle key={i} cx={X(x)} cy={Y(MDL.ys[i])} r="2.6" className="obs"/>)}
+          <text x={W-pr} y={pt+4} className="axt" textAnchor="end">n = {MDL.n}</text>
+        </svg>
+        <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Total description length for each polynomial degree">
+          {MDL.fits.map((f,i) => {
+            const x = bx0 + i*((W - bx0 - 6)/9) + 2, h1 = f.LH/maxT*bh, h2 = f.LD/maxT*bh;
+            return (
+              <g key={i} onClick={() => setK(i)} style={{cursor:"pointer"}}>
+                <rect x={x} y={pt + bh - h1 - h2} width={bw} height={h2} className={`bar-d ${i === k ? "sel" : ""}`}/>
+                <rect x={x} y={pt + bh - h1} width={bw} height={h1} className={`bar-h ${i === k ? "sel" : ""}`}/>
+                <text x={x + bw/2} y={H-8} className="axt" textAnchor="middle">{i}</text>
+                {i === MDL.best && <text x={x + bw/2} y={pt + bh - h1 - h2 - 6} className="axt blue" textAnchor="middle">min</text>}
+              </g>
+            );
+          })}
+          <line x1={bx0-4} x2={W} y1={pt+bh} y2={pt+bh} className="gridl"/>
+          <text x={bx0-6} y={pt+8} className="axt" textAnchor="end">bits</text>
+          <g transform={`translate(${bx0},${pt})`}><rect width="8" height="8" className="bar-h"/><text x="12" y="7" className="axt">L(H)</text><rect x="50" width="8" height="8" className="bar-d"/><text x="62" y="7" className="axt">L(D|H)</text></g>
+        </svg>
+      </div>
+    </Viz>
+  );
+}
+
+/* II. Contradiction: claims as regions in condition space */
+function ConflictViz(){
+  const [bx, setBx] = useState(6.2);
+  const [by, setBy] = useState(6.0);
+  const [opp, setOpp] = useState(true);
+  const W = 320, H = 240, p = 30, S = (W - p - 10)/10, SY = (H - p - 14)/10;
+  const A = { x0:1.2, x1:6.0, y0:1.5, y1:6.5 };
+  const B = { x0:bx-2.2, x1:bx+2.2, y0:by-2.0, y1:by+2.0 };
+  const ox0 = Math.max(A.x0,B.x0), ox1 = Math.min(A.x1,B.x1), oy0 = Math.max(A.y0,B.y0), oy1 = Math.min(A.y1,B.y1);
+  const overlap = ox1 > ox0 && oy1 > oy0;
+  const area = overlap ? (ox1-ox0)*(oy1-oy0) : 0;
+  const sepX = B.x0 >= A.x1 || B.x1 <= A.x0, sepY = B.y0 >= A.y1 || B.y1 <= A.y0;
+  const RX = (x0,x1,y0,y1) => ({ x: p + x0*S, y: 14 + (10-y1)*SY, width: (x1-x0)*S, height: (y1-y0)*SY });
+  let verdict, cls;
+  if(!overlap){ verdict = `No shared conditions. The disagreement points to a possible moderator along ${sepX && sepY ? "θ₁ and θ₂" : sepX ? "θ₁" : "θ₂"}.`; cls = "blue"; }
+  else if(opp){ verdict = `Genuine conflict: incompatible relations over a shared region of area ${area.toFixed(1)}.`; cls = "rose"; }
+  else { verdict = `Corroboration: compatible relations over a shared region of area ${area.toFixed(1)}.`; cls = ""; }
+  return (
+    <Viz title="Fig. II · Claims as regions of condition space" tag="Abstract example"
+      readout={<span className={cls}>{verdict}</span>}
+      controls={<>
+        <Slider id="cf-bx" label="Claim B · condition θ₁" min={2.2} max={7.8} step={0.1} value={bx} onChange={setBx} fmt={v => v.toFixed(1)} />
+        <Slider id="cf-by" label="Claim B · condition θ₂" min={2} max={8} step={0.1} value={by} onChange={setBy} fmt={v => v.toFixed(1)} />
+        <div className="seg" role="group" aria-label="Relation asserted by claim B">
+          <button type="button" className={opp ? "on" : ""} onClick={() => setOpp(true)}>B: X decreases Y</button>
+          <button type="button" className={!opp ? "on" : ""} onClick={() => setOpp(false)}>B: X increases Y</button>
+        </div>
+      </>}>
+      <svg viewBox={`0 0 ${W} ${H}`} className="single" role="img" aria-label="Two claims drawn as rectangles over two condition variables">
+        {[0,2,4,6,8,10].map(v => <g key={v}><line x1={p+v*S} x2={p+v*S} y1={14} y2={H-p+0} className="gridl"/><line x1={p} x2={W-10} y1={14+(10-v)*SY} y2={14+(10-v)*SY} className="gridl"/></g>)}
+        <text x={W-10} y={H-10} className="axt" textAnchor="end">θ₁</text>
+        <text x={8} y={22} className="axt">θ₂</text>
+        <rect {...RX(A.x0,A.x1,A.y0,A.y1)} className="regA"/>
+        <rect {...RX(B.x0,B.x1,B.y0,B.y1)} className={`regB ${opp ? "" : "same"}`}/>
+        {overlap && <rect {...RX(ox0,ox1,oy0,oy1)} className={opp ? "regX" : "regC"}/>}
+        <text x={p + A.x0*S + 6} y={14 + (10-A.y0)*SY - 8} className="rlab">A: X ↑ Y</text>
+        <text x={p + B.x1*S - 6} y={14 + (10-B.y1)*SY + 16} className="rlab" textAnchor="end">B: X {opp ? "↓" : "↑"} Y</text>
+      </svg>
+    </Viz>
+  );
+}
+
+/* III. Counterfactual worlds: support propagation with graph surgery */
+const CW = {
+  nodes: [
+    { id:"F1", x:40, y:40, prior:.92 }, { id:"F2", x:40, y:100, prior:.85 }, { id:"F3", x:40, y:160, prior:.80 }, { id:"F4", x:40, y:220, prior:.70 },
+    { id:"M1", x:160, y:70 }, { id:"M2", x:160, y:140 }, { id:"M3", x:160, y:210 },
+    { id:"C1", x:280, y:40 }, { id:"C2", x:280, y:100 }, { id:"C3", x:280, y:160 }, { id:"C4", x:280, y:220 },
+  ],
+  edges: [ ["F1","M1",.9],["F2","M1",.7],["F2","M2",.9],["F3","M2",.6],["F4","M3",.9],["M1","C1",.95],["M1","C2",.6],["M2","C2",.7],["M2","C3",.8],["M3","C3",.5],["M3","C4",.95] ],
+};
+function propagate(removed){
+  const s = {};
+  for(const n of CW.nodes){
+    if(n.prior != null){ s[n.id] = removed.has(n.id) ? 0 : n.prior; continue; }
+    const pa = CW.edges.filter(e => e[1] === n.id);
+    s[n.id] = 1 - pa.reduce((acc,e) => acc * (1 - e[2]*s[e[0]]), 1);
+  }
+  return s;
+}
+function CounterViz(){
+  const [removed, setRemoved] = useState(() => new Set(["F2"]));
+  const base = useMemo(() => propagate(new Set()), []);
+  const s = useMemo(() => propagate(removed), [removed]);
+  const pos = Object.fromEntries(CW.nodes.map(n => [n.id, n]));
+  const toggle = (id) => setRemoved(r => { const n = new Set(r); n.has(id) ? n.delete(id) : n.add(id); return n; });
+  const load = ["F1","F2","F3","F4"].map(f => { const t = propagate(new Set([f])); return { f, v: ["C1","C2","C3","C4"].reduce((a,c) => a + base[c] - t[c], 0) }; });
+  const maxL = Math.max(...load.map(l => l.v));
+  return (
+    <Viz title="Fig. III · Counterfactual world W(¬F)" tag="Abstract example · live propagation"
+      readout={<>{["C1","C2","C3","C4"].map(c => { const dlt = s[c] - base[c]; return <span key={c} className={dlt < -.15 ? "rose" : ""}>s({c}) {s[c].toFixed(2)} <i>Δ {dlt >= 0 ? "+" : "−"}{Math.abs(dlt).toFixed(2)}</i></span>; })}</>}
+      controls={<div className="loadb"><span className="mono">Load-bearing score · Σ Δ over conclusions when removed alone</span>
+        {load.map(l => <div key={l.f} className="lrow"><span>{l.f}</span><div className="bar"><i style={{width:`${l.v/maxL*100}%`}}></i></div><b>{l.v.toFixed(2)}</b></div>)}</div>}>
+      <svg viewBox="0 0 320 260" className="single" role="img" aria-label="Dependency graph from findings to conclusions. Select a finding to remove it.">
+        {["Findings","Intermediate","Conclusions"].map((t,i) => <text key={t} x={[40,160,280][i]} y="14" className="axt" textAnchor="middle">{t}</text>)}
+        {CW.edges.map(([a,b,w],i) => { const A = pos[a], B = pos[b]; const dead = s[a] < .01; return <line key={i} x1={A.x} y1={A.y+12} x2={B.x} y2={B.y+12} className={`dep ${dead ? "cut" : ""}`} style={{strokeWidth: .5 + w*1.4}}/>; })}
+        {CW.nodes.map(n => {
+          const prem = n.prior != null, off = removed.has(n.id);
+          return (
+            <g key={n.id} transform={`translate(${n.x},${n.y+12})`} className={`cwn ${prem ? "prem" : ""} ${off ? "off" : ""}`}
+               onClick={prem ? () => toggle(n.id) : undefined} tabIndex={prem ? 0 : undefined} role={prem ? "button" : undefined}
+               aria-label={prem ? `${n.id}, ${off ? "removed" : "present"}` : undefined}
+               onKeyDown={prem ? (e => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); toggle(n.id); } }) : undefined}>
+              <circle r="15" className="cw-bg"/>
+              <circle r="15" className="cw-fill" style={{opacity: s[n.id]}}/>
+              <text y="4" textAnchor="middle" className="cw-t">{n.id}</text>
+              {off && <line x1="-11" y1="-11" x2="11" y2="11" className="strike"/>}
+            </g>
+          );
+        })}
+      </svg>
+    </Viz>
+  );
+}
+
+/* IV. Recursive criticism: toy dynamics of confidence under critique */
+function CriticViz(){
+  const [rho, setRho] = useState(0.68);
+  const [m, setM] = useState(0.5);
+  const a = 0.28, K = 14;
+  const rp = (rho*m) / (rho*m + (1-rho)*(1-m));
+  const run = (target) => { const out = [0.5]; for(let k = 0; k < K; k++){ const p = out[k]; out.push(p + a*(target - p)); } return out; };
+  const sound = run(rp), flawed = run(1 - rp);
+  const W = 320, H = 210, pl = 30, pr = 12, pt = 12, pb = 26;
+  const X = k => pl + k/K*(W-pl-pr), Y = v => pt + (1-v)*(H-pt-pb);
+  const path = arr => arr.map((v,k) => (k ? "L" : "M") + X(k).toFixed(1) + "," + Y(v).toFixed(1)).join("");
+  const sep = sound[K] - flawed[K];
+  return (
+    <Viz title="Fig. IV · Confidence under recursive critique" tag="Toy model · not an experiment"
+      readout={<><span>Effective reliability ρ′ = {rp.toFixed(2)}</span><span className={sep < 0 ? "rose" : sep > .3 ? "hl" : ""}>Separation at depth {K} = {sep.toFixed(2)}</span><span>Limit = 2ρ′ − 1 = {(2*rp-1).toFixed(2)}</span></>}
+      controls={<>
+        <Slider id="rc-rho" label="Critic reliability ρ" min={0.3} max={0.95} step={0.01} value={rho} onChange={setRho} fmt={v => v.toFixed(2)} />
+        <Slider id="rc-m" label="Meta-critic accuracy m · 0.50 = none" min={0.5} max={0.95} step={0.01} value={m} onChange={setM} fmt={v => v.toFixed(2)} />
+      </>}>
+      <svg viewBox={`0 0 ${W} ${H}`} className="single" role="img" aria-label="Confidence trajectories for a sound and a flawed hypothesis over critique depth">
+        {[0,.25,.5,.75,1].map(v => <g key={v}><line x1={pl} x2={W-pr} y1={Y(v)} y2={Y(v)} className="gridl"/><text x={pl-6} y={Y(v)+3} className="axt" textAnchor="end">{v}</text></g>)}
+        {[0,7,14].map(k => <text key={k} x={X(k)} y={H-8} className="axt" textAnchor="middle">{k}</text>)}
+        <text x={W-pr} y={H-8} className="axt" textAnchor="end">depth k</text>
+        <path d={`${path(sound)}L${X(K)},${Y(flawed[K])}${flawed.slice().reverse().map((v,i) => "L" + X(K-i).toFixed(1) + "," + Y(v).toFixed(1)).join("")}Z`} className="sepfill"/>
+        <path d={path(sound)} className="tr-s"/>
+        <path d={path(flawed)} className="tr-f"/>
+        <circle cx={X(K)} cy={Y(sound[K])} r="3" className="dot-s"/><circle cx={X(K)} cy={Y(flawed[K])} r="3" className="dot-f"/>
+        <text x={X(K)-6} y={Y(sound[K]) - 8} className="axt blue" textAnchor="end">sound</text>
+        <text x={X(K)-6} y={Y(flawed[K]) + 16} className="axt rose" textAnchor="end">flawed</text>
+      </svg>
+    </Viz>
+  );
+}
+
+/* V. Unknown unknowns: KDE density and enclosed-void score */
+const VOID_PTS = (() => {
+  const r = mulberry(31), P = [];
+  const cl = [[.2,.25,.06,45],[.78,.22,.07,45],[.8,.75,.06,40],[.22,.78,.05,35]];
+  for(const [cx,cy,s,n] of cl) for(let i = 0; i < n; i++) P.push([cx + gauss(r)*s, cy + gauss(r)*s]);
+  for(let i = 0; i < 110; i++){ const t = r()*Math.PI*2, rr = .2 + gauss(r)*.03; P.push([.5 + Math.cos(t)*rr*1.15, .5 + Math.sin(t)*rr]); }
+  return P.filter(p => p[0] > 0 && p[0] < 1 && p[1] > 0 && p[1] < 1);
+})();
+function VoidViz(){
+  const ref = useRef(null);
+  const [h, setH] = useState(0.05);
+  const [showV, setShowV] = useState(true);
+  const [probe, setProbe] = useState(null);
+  const grid = useRef(null);
+  useEffect(() => {
+    const GX = 80, GY = 60, rho = new Float32Array(GX*GY);
+    for(let j = 0; j < GY; j++) for(let i = 0; i < GX; i++){
+      const x = (i+.5)/GX, y = (j+.5)/GY; let s = 0;
+      for(const p of VOID_PTS){ const dx = (x-p[0])/h, dy = (y-p[1])/h; const d2 = dx*dx + dy*dy; if(d2 < 16) s += Math.exp(-d2/2); }
+      rho[j*GX+i] = s / (VOID_PTS.length * 2*Math.PI*h*h);
+    }
+    const at = (x,y) => { const i = Math.max(0, Math.min(GX-1, Math.floor(x*GX))), j = Math.max(0, Math.min(GY-1, Math.floor(y*GY))); return rho[j*GX+i]; };
+    let mx = 0; for(const v of rho) mx = Math.max(mx, v);
+    const vs = new Float32Array(GX*GY), R = 2.2*h;
+    for(let j = 0; j < GY; j++) for(let i = 0; i < GX; i++){
+      const x = (i+.5)/GX, y = (j+.5)/GY; let ring = 0, minr = Infinity;
+      for(let q = 0; q < 12; q++){ const t = q/12*Math.PI*2; const v = at(x + Math.cos(t)*R, y + Math.sin(t)*R); ring += v; minr = Math.min(minr, v); }
+      ring /= 12;
+      vs[j*GX+i] = Math.max(0, Math.min(ring, minr*2.2) - rho[j*GX+i]) / mx;
+    }
+    grid.current = { GX, GY, rho, vs, mx };
+    const c = ref.current, ctx = c.getContext("2d"), d = Math.min(window.devicePixelRatio || 1, 2);
+    const rc = c.getBoundingClientRect(), W = rc.width, H = rc.height;
+    c.width = W*d; c.height = H*d; ctx.setTransform(d,0,0,d,0,0); ctx.clearRect(0,0,W,H);
+    const iv = css("--ivory") || "#ECE6D8", bl = css("--blue") || "#8DB0DF";
+    const rgb = hx => { const n = parseInt(hx.slice(1),16); return [n>>16&255, n>>8&255, n&255]; };
+    const [ir,ig,ib] = rgb(iv), [br,bg,bb] = rgb(bl);
+    const cw = W/GX, ch = H/GY;
+    for(let j = 0; j < GY; j++) for(let i = 0; i < GX; i++){
+      const v = rho[j*GX+i]/mx;
+      ctx.fillStyle = `rgba(${ir},${ig},${ib},${(Math.pow(v,.7)*.32).toFixed(3)})`;
+      ctx.fillRect(i*cw, (GY-1-j)*ch, cw+.5, ch+.5);
+      if(showV){ const w = vs[j*GX+i]; if(w > .1){ ctx.fillStyle = `rgba(${br},${bg},${bb},${Math.min(.75, w*1.6).toFixed(3)})`; ctx.fillRect(i*cw, (GY-1-j)*ch, cw+.5, ch+.5); } }
+    }
+    ctx.fillStyle = `rgba(${ir},${ig},${ib},.85)`;
+    for(const p of VOID_PTS){ ctx.beginPath(); ctx.arc(p[0]*W, (1-p[1])*H, 1.1, 0, Math.PI*2); ctx.fill(); }
+  }, [h, showV]);
+  const onMove = (e) => {
+    const g = grid.current; if(!g) return;
+    const rc = ref.current.getBoundingClientRect();
+    const x = (e.clientX - rc.left)/rc.width, y = 1 - (e.clientY - rc.top)/rc.height;
+    const i = Math.max(0, Math.min(g.GX-1, Math.floor(x*g.GX))), j = Math.max(0, Math.min(g.GY-1, Math.floor(y*g.GY)));
+    setProbe({ x, y, r: g.rho[j*g.GX+i]/g.mx, v: g.vs[j*g.GX+i] });
+  };
+  return (
+    <Viz title="Fig. V · Density and enclosed voids in an embedding" tag="Live computation · synthetic points"
+      readout={probe ? <><span>x = ({probe.x.toFixed(2)}, {probe.y.toFixed(2)})</span><span>ρ̂ = {probe.r.toFixed(2)}</span><span className={probe.v > .1 ? "hl" : ""}>v = {probe.v.toFixed(2)}{probe.v > .1 ? " · enclosed void" : ""}</span></> : <span>Point at the map to read density ρ̂ and void score v. Blue marks empty regions surrounded by dense ones.</span>}
+      controls={<>
+        <Slider id="uu-h" label="Kernel bandwidth h" min={0.03} max={0.09} step={0.005} value={h} onChange={setH} fmt={v => v.toFixed(3)} />
+        <div className="seg" role="group" aria-label="Void overlay">
+          <button type="button" className={showV ? "on" : ""} onClick={() => setShowV(true)}>Show voids</button>
+          <button type="button" className={!showV ? "on" : ""} onClick={() => setShowV(false)}>Density only</button>
+        </div>
+      </>}>
+      <canvas ref={ref} className="voidc" onPointerMove={onMove} onPointerLeave={() => setProbe(null)} aria-label="Heat map of point density with enclosed voids highlighted"></canvas>
+    </Viz>
+  );
+}
+
+/* ---------------- PROGRAMS ---------------- */
+const PROGRAMS = [
+  {
+    id:"p-theory", n:"I", name:"Autonomous Theory Formation",
+    line:"Searching for compact explanations of data, not only correlations within it.",
+    problem:"Given observations D, find a theory H from a space of candidate theories that explains D and implies something D does not contain. Retrieval returns what is known. Theory formation has to produce a structure that compresses the data and extends beyond it.",
+    formal:<><span className="fx"><i>H</i>* = arg min<sub><i>H</i> ∈ ℋ</sub> [ <i>L</i>(<i>H</i>) + <i>L</i>(<i>D</i> | <i>H</i>) ]</span><span className="fnote">Two-part minimum description length. <i>L</i>(<i>H</i>) is the cost of stating the theory; <i>L</i>(<i>D</i>|<i>H</i>) is the cost of the data given the theory.</span></>,
+    approach:"Search over symbolic expressions and causal structures, guided by a language-model prior over forms that resemble established science. Score candidates by compression and by accuracy on data withheld from the search, and reject any theory that implies no new testable consequence.",
+    eval:"Rediscovery of known relationships from data withheld from all model training, compared against established symbolic-regression methods and a plain curve-fitting baseline.",
+    open:["How should L(H) be measured for theories stated in natural language?","Does shorter description track truth outside physics-like domains?"],
+    viz:<TheoryViz />,
+  },
+  {
+    id:"p-contra", n:"II", name:"Scientific Contradiction Engine",
+    line:"Treating disagreement in the literature as information rather than noise.",
+    problem:"Published findings often appear to disagree. Some disagreements are real. Many come from different conditions, measurements or definitions. Each kind points to a different next step: a decisive experiment, a hidden moderator, or a correction.",
+    formal:<><span className="fx"><i>c</i> = ⟨ <i>s</i>, <i>r</i>, <i>o</i>, Γ, <i>e</i> ⟩</span><span className="fx">conflict(<i>c<sub>i</sub></i>, <i>c<sub>j</sub></i>) ⇔ <i>r<sub>i</sub></i> ⊥ <i>r<sub>j</sub></i> ∧ Γ<sub><i>i</i></sub> ∩ Γ<sub><i>j</i></sub> ≠ ∅</span><span className="fnote">A claim relates subject <i>s</i> to object <i>o</i> by relation <i>r</i> under conditions Γ with evidence <i>e</i>. Incompatible claims with disjoint conditions suggest a moderator, not a contradiction.</span></>,
+    approach:"Extract claims with explicit condition sets. Classify each disagreeing pair as genuine conflict, condition-separated, measurement mismatch or extraction error. Rank genuine conflicts by how much downstream knowledge depends on them.",
+    eval:"Precision and recall of conflict classification on expert-annotated claim pairs, compared with an off-the-shelf contradiction classifier that ignores conditions.",
+    open:["Can condition sets be extracted reliably when papers leave them implicit?","How should partially overlapping conditions be weighted?"],
+    viz:<ConflictViz />,
+  },
+  {
+    id:"p-counter", n:"III", name:"Counterfactual Research Worlds",
+    line:"Asking what we would believe if one finding had turned out differently.",
+    problem:"Scientific conclusions rest on chains of earlier results. When one result is wrong, the damage spreads along those chains. Few tools show which findings carry the most weight, so replication effort is hard to target.",
+    formal:<><span className="fx"><i>s</i>(<i>v</i>) = 1 − ∏<sub><i>u</i> ∈ pa(<i>v</i>)</sub> ( 1 − <i>w<sub>uv</sub></i> · <i>s</i>(<i>u</i>) )</span><span className="fx">Δ<sub><i>F</i></sub>(<i>v</i>) = <i>s</i>(<i>v</i>) − <i>s</i>(<i>v</i> | do(<i>s</i>(<i>F</i>) = 0))</span><span className="fnote">Support propagates through a dependency graph by noisy-OR. A counterfactual world removes finding <i>F</i> by intervention and recomputes every downstream conclusion.</span></>,
+    approach:"Build dependency graphs from the claim and citation structure of a literature. Simulate worlds in which individual findings fail, and report which conclusions lose support. Findings with large total Δ are candidates for replication first.",
+    eval:"Retrospective test: build graphs from literature dated before known retractions or failed replications, and measure whether the affected conclusions are the ones the graph flags.",
+    open:["How should edge weights w be estimated from text?","Noisy-OR assumes independent support. When is that badly wrong?"],
+    viz:<CounterViz />,
+  },
+  {
+    id:"p-critic", n:"IV", name:"Recursive Scientific Criticism",
+    line:"Critics that critique the critics, and a clear account of when that helps.",
+    problem:"Automated critique can catch errors in a hypothesis, but critics make errors too. Stacking critics only helps if each level is more often right than wrong and their errors are not shared. Otherwise recursion amplifies noise.",
+    formal:<><span className="fx"><i>h</i><sub><i>k</i>+1</sub> = <i>R</i>( <i>h<sub>k</sub></i>, <i>C</i>(<i>h<sub>k</sub></i>) ),  stop when <i>d</i>(<i>h</i><sub><i>k</i>+1</sub>, <i>h<sub>k</sub></i>) &lt; ε</span><span className="fx">ρ′ = ρ<i>m</i> / ( ρ<i>m</i> + (1 − ρ)(1 − <i>m</i>) )</span><span className="fnote">Critic <i>C</i> raises objections, reviser <i>R</i> updates the hypothesis. A meta-critic with accuracy <i>m</i> filters objections, raising effective reliability from ρ to ρ′ if errors are independent.</span></>,
+    approach:"Alternate critique and revision with separate critic and meta-critic roles, log every objection and its resolution, and stop on convergence. Measure critic reliability directly instead of assuming it.",
+    eval:"Seeded-flaw test: hypotheses with known injected errors, scored by detection rate and false-objection rate at each depth, against single-pass critique.",
+    open:["How correlated are the errors of critics built from similar models?","What stopping rule prevents critique from wearing down sound hypotheses?"],
+    viz:<CriticViz />,
+  },
+  {
+    id:"p-unknown", n:"V", name:"Unknown Unknowns Mapping",
+    line:"Mapping the places where the literature is silent, and asking why.",
+    problem:"Questions no one has asked leave no trace in a search index. One way to find them is to look for empty regions in a map of research topics that are surrounded by well-studied ground. Absence can mean unexplored, explored but unpublished, or incoherent.",
+    formal:<><span className="fx">ρ̂<sub><i>h</i></sub>(<i>x</i>) = (1 / <i>nh</i><sup>2</sup>) Σ<sub><i>i</i></sub> <i>K</i>( (<i>x</i> − <i>x<sub>i</sub></i>) / <i>h</i> )</span><span className="fx"><i>v</i>(<i>x</i>) = ρ̄<sub>∂<i>B<sub>r</sub></i>(<i>x</i>)</sub> − ρ̂<sub><i>h</i></sub>(<i>x</i>)</span><span className="fnote">Kernel density over embedded research topics. The void score is high where the ring of radius <i>r</i> around a point is dense and the point itself is empty, which separates enclosed gaps from the open frontier.</span></>,
+    approach:"Embed claims and topics, estimate density at several scales, and rank enclosed voids. Before reporting a void, search for null results that would explain it and test whether the combined concepts are coherent.",
+    eval:"Retrospective test: embed literature up to a cutoff year and measure whether high-void regions fill at a higher rate afterwards than low-density regions chosen at random.",
+    open:["Do embedding geometries reflect scientific distance, or only wording?","How can unpublished negative results be accounted for?"],
+    viz:<VoidViz />,
+  },
+];
+
+function Research(){
+  return (
+    <section id="research">
+      <div className="wrap sec">
+        <div className="sec-grid">
+          <div className="margin"><span className="rule"></span><span className="mono"><b>Research</b></span><span className="mono">5 programs</span></div>
+          <div style={{minWidth:0}}>
+            <h2 className="h2">Five programs at the edge of <em>what is known</em></h2>
+            <p className="lede" style={{marginTop:24}}>Each program begins with a precise problem, a formal statement, and a planned evaluation that could prove the idea wrong. The diagrams are working sketches: some compute live on synthetic data, others are toy models. None of them is a result.</p>
+            <div className="levels">
+              {LEVELS.map((l,i) => (
+                <div className="level" key={i}>
+                  <div className="lv-top"><MIcon level={i} /><span>{l.name}</span><b>{l.count}</b></div>
+                  <p>{l.def}</p>
+                </div>
+              ))}
+            </div>
+            <nav className="pindex" aria-label="Research programs">
+              {PROGRAMS.map(p => (
+                <a key={p.id} href={`#${p.id}`}><span className="pi-n">{p.n}</span><span className="pi-name">{p.name}</span><span className="pi-st"><MIcon level={0}/>Proposed</span></a>
+              ))}
+            </nav>
+          </div>
+        </div>
+
+        <div className="programs">
+          {PROGRAMS.map(p => (
+            <article className="prog" id={p.id} key={p.id}>
+              <header className="prog-head">
+                <span className="prog-n">{p.n}</span>
+                <div className="prog-title"><h3>{p.name}</h3><p>{p.line}</p></div>
+                <Track level={0} />
+              </header>
+              <div className="prog-body">
+                <div className="prog-text">
+                  <div className="formal"><span className="mono">Formal statement</span>{p.formal}</div>
+                  <dl className="pdl">
+                    <div><dt className="mono">Problem</dt><dd>{p.problem}</dd></div>
+                    <div><dt className="mono">Proposed approach</dt><dd>{p.approach}</dd></div>
+                    <div><dt className="mono">Planned evaluation</dt><dd>{p.eval}</dd></div>
+                    <div><dt className="mono">Open questions</dt><dd><ul>{p.open.map((q,i) => <li key={i}>{q}</li>)}</ul></dd></div>
+                  </dl>
+                  <p className="mono pstat">Registered tests: 0 · see Experimental Results</p>
+                </div>
+                <div className="prog-viz">{p.viz}</div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------------- EXPERIMENTAL RESULTS ---------------- */
+const LIFECYCLE = [
+  { k:"Pre-registered", d:"Hypothesis, metrics, datasets and baselines fixed and timestamped before any run." },
+  { k:"Run internally", d:"Executed as registered. Every deviation logged with its reason." },
+  { k:"Released", d:"Code, data, seeds, outputs and environment published for replication." },
+  { k:"Independently verified", d:"Reproduced by an outside party. Their report is linked in full." },
+];
+const FIELDS = [
+  { k:"Hypothesis", items:["Question and hypothesis, stated before data are examined","Primary metric and the threshold that counts as success","Link to the timestamped pre-registration"] },
+  { k:"Methodology", items:["System version, configuration, prompts and search procedures in full","Random seeds and compute used","Every deviation from the pre-registration, with reasons"] },
+  { k:"Datasets", items:["Source, licence and collection cutoff date","Separation of development and evaluation data, with contamination checks","A frozen copy or an exact retrieval script"] },
+  { k:"Baselines", items:["A trivial baseline: random or frequency-based","A retrieval-only baseline with no generation","The strongest published method that can be run, tuned with equal effort"] },
+  { k:"Results", items:["All pre-registered metrics with confidence intervals","Results from every run, not only the best","Per-item outputs released for inspection"] },
+  { k:"Limitations", items:["Threats to validity","Known failure cases","What the result does not show"] },
+  { k:"Verification", items:["Status on the lifecycle above","Who verified, what they reran, and on what hardware","Any discrepancy between their numbers and ours"] },
+];
+
+function Results(){
+  const [tab, setTab] = useState(0);
+  const counts = [["Pre-registered",0],["Run internally",0],["Released",0],["Verified",0],["Not reproduced",0]];
+  return (
+    <section id="results" className="results">
+      <div className="wrap sec">
+        <div className="sec-grid">
+          <div className="margin"><span className="rule"></span><span className="mono"><b>Experimental Results</b></span><span className="mono">Registry · empty</span></div>
+          <div style={{minWidth:0}}>
+            <h2 className="h2">Nothing counts until someone else <em>can check it</em></h2>
+            <p className="lede" style={{marginTop:24}}>This is the framework NOEMA will use to publish tests of its research programs. Each test is registered before it runs, reported in full whether it succeeds or fails, and labelled verified only after an outside party reproduces it.</p>
+
+            <div className="counts" role="list" aria-label="Registry counts">
+              {counts.map(([k,v]) => <div key={k} role="listitem"><b>{v}</b><span className="mono">{k}</span></div>)}
+            </div>
+            <p className="mono asof">Registry state as of October 2026. No tests have been registered or run.</p>
+
+            <div className="life">
+              {LIFECYCLE.map((s,i) => (
+                <div className="life-step" key={i}>
+                  <div className="life-top"><MIcon level={i === 3 ? 2 : i >= 1 ? 1 : 0} /><span>{s.k}</span></div>
+                  <p>{s.d}</p>
+                </div>
+              ))}
+              <div className="life-branch"><span className="mono" style={{color:"var(--rose)"}}>Not reproduced</span><p>If replication fails, the entry stays public with both sets of numbers and the status says so.</p></div>
+            </div>
+
+            <div className="tmpl">
+              <div className="c-bar"><span className="mono"><b>Result record</b> · publication template</span><span className="vtag">Template · contains no results</span></div>
+              <div className="tabs" role="tablist" aria-label="Template fields">
+                {FIELDS.map((f,i) => <button key={f.k} role="tab" aria-selected={tab === i} className={tab === i ? "on" : ""} onClick={() => setTab(i)}>{f.k}</button>)}
+              </div>
+              <div className="tmpl-body" role="tabpanel">
+                <div className="tb-l"><span className="mono">Field {tab+1} of {FIELDS.length}</span><h4>{FIELDS[tab].k}</h4></div>
+                <ul>{FIELDS[tab].items.map((it,i) => <li key={i}><span className="req">Required</span>{it}</li>)}</ul>
+              </div>
+            </div>
+
+            <div className="registry">
+              <div className="reg-scroll">
+                <div className="reg-row h"><span className="mono">ID</span><span className="mono">Program</span><span className="mono">Question</span><span className="mono">Baselines</span><span className="mono">Status</span><span className="mono">Materials</span></div>
+                <div className="reg-empty">
+                  <span className="mono">No entries</span>
+                  <p>The first registered test will appear here with its pre-registration date, before any result is known.</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="rules">
+              {[["Register first","Metrics and success thresholds are fixed before a test runs."],["Publish every outcome","Null and negative results are reported with the same detail as positive ones."],["Compare fairly","Simple baselines are always included and tuned with the same effort."],["Release everything","Code, data, seeds and per-item outputs accompany every result."],["Verify externally","Only outside reproduction earns the verified label."]].map(([h,p],i) => (
+                <div key={i}><h4>{h}</h4><p>{p}</p></div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+const STAGES = [
+  { h:"Read", p:"Extract claims, conditions, methods and evidence strength from papers.", io:"papers → claims" },
+  { h:"Represent", p:"Link claims into a graph of concepts, mechanisms and sources.", io:"claims → graph" },
+  { h:"Connect", p:"Search for paths and gaps that no single source has examined.", io:"graph → candidate links" },
+  { h:"Propose", p:"Draft hypotheses with mechanism, prediction and falsifier.", io:"links → hypotheses" },
+  { h:"Challenge", p:"Test each draft against contradicting evidence and rank what survives.", io:"hypotheses → shortlist" },
+];
+
+const PRINCIPLES = [
+  { h:"Every claim keeps its source", p:"Any statement the system makes should trace back to the passage it came from." },
+  { h:"Uncertainty is stated", p:"Confidence comes with its reasons, and low confidence is shown as clearly as high." },
+  { h:"Critique is built in", p:"A separate step looks for evidence against each hypothesis before it is shown." },
+  { h:"Scientists decide", p:"The output is a shortlist for expert judgement and experiment, never a conclusion." },
+];
+
+function Technology(){
+  return (
+    <section id="technology">
+      <div className="wrap sec">
+        <div className="sec-grid">
+          <div className="margin"><span className="rule"></span><span className="mono"><b>Technology</b></span><span className="mono">Intended design</span></div>
+          <div style={{minWidth:0}}>
+            <h2 className="h2">A pipeline that ends in <em>doubt</em>, not certainty</h2>
+            <p className="lede" style={{marginTop:24}}>This is the architecture NOEMA intends to build and study. It is a design under exploration and may change as the research shows what works.</p>
+
+            <div className="pipe" role="list" aria-label="Intended pipeline stages">
+              {STAGES.map((s,i) => (
+                <div className="stage" role="listitem" key={i}>
+                  <span className="mono">Stage {i+1}</span>
+                  <h4>{s.h}</h4>
+                  <p>{s.p}</p>
+                  <span className="io">{s.io}</span>
+                </div>
+              ))}
+              <div className="loop">
+                <span className="mono"><span style={{color:"var(--blue)"}}>↺</span> Rejected hypotheses feed back into how gaps are ranked</span>
+                <span className="mono">Output → expert review</span>
+              </div>
+            </div>
+
+            <div className="tech-lower">
+              <div className="principles">
+                <span className="mono" style={{paddingBottom:14}}><b>Design principles</b></span>
+                {PRINCIPLES.map((p,i) => (
+                  <div className="principle" key={i}>
+                    <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="7.5" fill="none" stroke="var(--blue-line)"/><circle cx="9" cy="9" r={2 + i*.8} fill="var(--blue)" opacity={.35 + i*.18}/></svg>
+                    <div><h4>{p.h}</h4><p>{p.p}</p></div>
+                  </div>
+                ))}
+              </div>
+              <div className="code">
+                <div className="code-head"><span className="mono"><b>claim_record</b> · draft schema</span><span className="mono">Subject to change</span></div>
+<pre>{`<span class="c"># One unit of extracted knowledge</span>
+<span class="k">claim</span> {
+  <span class="k">statement</span>:   <span class="s">"X increases Y"</span>
+  <span class="k">conditions</span>:  [organism, temperature, dose, …]
+  <span class="k">method</span>:      <span class="t">observational | experimental | computed</span>
+  <span class="k">effect</span>:      { size, interval, n }
+  <span class="k">source</span>:      { document_id, passage }
+  <span class="k">status</span>:      <span class="t">reported | replicated | contested</span>
+  <span class="k">links</span>:       [ claim_id, relation, kind ]
+}`.split("\n").map((l,i) => <span key={i} dangerouslySetInnerHTML={{__html: l + "\n"}} />)}</pre>
+              </div>
+            </div>
+
+            <div className="ledger">
+              <div>
+                <span className="mono"><b>Exists today</b></span>
+                <ul><li>Five proposed research programs and an intended architecture</li><li>This website and its scripted demonstration on sample data</li></ul>
+              </div>
+              <div className="no">
+                <span className="mono"><b>Does not exist yet</b></span>
+                <ul><li>A trained or deployed discovery system</li><li>Benchmarks, evaluations or published results</li><li>Any validated scientific finding</li></ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function About(){
+  return (
+    <section id="about">
+      <div className="wrap sec">
+        <div className="sec-grid">
+          <div className="margin"><span className="rule"></span><span className="mono"><b>About</b></span><span className="mono">Independent · early stage</span></div>
+          <div style={{minWidth:0}}>
+            <h2 className="h2">An independent venture at the <em>very beginning</em></h2>
+            <div className="about-grid">
+              <div className="prose">
+                <p>NOEMA is an independent research venture in its earliest stage. Its aim is to find out whether AI systems can help scientists see what the literature already implies but no one has yet tested.</p>
+                <p>The project is pre-product. Beyond its founders, this site lists no partners, funding or results, because claims about them belong here only once they are real and can be checked.</p>
+                <p>When there is progress, it will be reported with its evidence and its limits, the same standard the work asks of its own hypotheses.</p>
+                <div className="commit">
+                  <div><span>i</span><span>Report negative results alongside positive ones.</span></div>
+                  <div><span>ii</span><span>Label demonstrations, samples and simulations as such.</span></div>
+                  <div><span>iii</span><span>Treat generated hypotheses as proposals for experts, never as findings.</span></div>
+                </div>
+              </div>
+              <aside className="etym">
+                <span className="mono"><b>On the name</b></span>
+                <div className="word">νόημα<small>noema</small></div>
+                <p>Greek for "thought" or "what is thought of". In Husserl's phenomenology, the noema is the object as it is meant in an act of thinking, distinct from the act itself.</p>
+                <p style={{color:"var(--ivory-3)"}}>A fitting name for systems that model ideas about the world rather than the world directly.</p>
+              </aside>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function App(){
+  return (
+    <>
+      <Nav />
+      <main>
+        <Hero />
+        <Research />
+        <Results />
+        <Technology />
+        <About />
+        <Team />
+        <Engine />
+      </main>
+      <footer>
+        <div className="wrap">
+          <a className="brand" href="#home"><Mark /><span className="brand-word">NOEMA</span></a>
+          <p>Experimental and pre-product. All Discovery Engine content is synthetic sample data. © 2026 NOEMA.</p>
+        </div>
+      </footer>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+
+</body></html>
